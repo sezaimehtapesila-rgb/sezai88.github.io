@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/formasyonum.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:42 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koin Arama</title>
+    <script>
+        let coins = [];
+
+        async function fetchData() {
+            try {
+                const response = await fetch("gateio_data.json");
+                const data = await response.json();
+                coins = data.map(item => item.currency_pair.toLowerCase());
+                coins.sort((a, b) => a.length - b.length); // En kısa olanı önce listele
+            } catch (error) {
+                console.error("JSON yüklenirken hata oluştu:", error);
+            }
+        }
+
+        function searchCoins() {
+            const input = document.getElementById("search").value.toLowerCase();
+            const suggestions = document.getElementById("suggestions");
+            suggestions.innerHTML = ""; // Önceki önerileri temizle
+
+            if (input.length === 0) return;
+
+            const filtered = coins.filter(coin => coin.includes(input));
+            filtered.forEach(coin => {
+                const div = document.createElement("div");
+                div.innerText = coin;
+                div.classList.add("suggestion-item");
+                div.onclick = () => selectCoin(coin);
+                suggestions.appendChild(div);
+            });
+        }
+
+        function selectCoin(coin) {
+            document.getElementById("search").value = coin;
+            document.getElementById("suggestions").innerHTML = "";
+            document.getElementById("chartFrame").src = `https://wolatil.com/forma.php?koin=${coin}&saat=1h`;
+        }
+
+        window.onload = fetchData;
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: black; color: white; text-align: center; display: flex; flex-direction: column; height: 100vh; }
+        .search-container { position: relative; padding: 20px; z-index: 10; background: black; }
+        input { padding: 10px; width: 300px; font-size: 16px; background: #222; color: white; border: 1px solid #555; border-radius: 5px; }
+        .suggestions { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); width: 300px; background: #111; border: 1px solid #555; border-radius: 5px; max-height: 200px; overflow-y: auto; z-index: 20; }
+        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #333; color: white; }
+        .suggestion-item:hover { background: #333; }
+        .iframe-container { flex: 1; width: 100%; display: flex; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+<script type="module" src="auth-check-include.js"></script>
+    <div class="search-container">
+        <input type="text" id="search" oninput="searchCoins()" placeholder="Koin adı girin...">
+        <div id="suggestions" class="suggestions"></div>
+    </div>
+    
+    <div class="iframe-container">
+        <iframe id="chartFrame" src="#"></iframe>
+    </div>
+</body>
+
+<!-- Mirrored from www.wolatil.com/formasyonum.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:42 GMT -->
+</html>

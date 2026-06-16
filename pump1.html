@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/pump1.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head><script type="module" src="auth-check-include.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koin Analizi - Pump</title>
+    <style>
+        body { background-color: black; color: white; font-family: Arial, sans-serif; margin: 0; padding: 10px; }
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 6px; text-align: left; border-bottom: 1px solid #444; white-space: nowrap; font-size: 14px; }
+        th { background-color: #222; color: white; }
+        th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4), th:nth-child(5), td:nth-child(5),
+        th:nth-child(6), td:nth-child(6), th:nth-child(7), td:nth-child(7), th:nth-child(8), td:nth-child(8) { text-align: right; }
+        .analiz-et { background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .analiz-et:hover { background-color: darkgreen; }
+        .iframe-container { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); z-index: 9999; overflow-y: auto; box-sizing: border-box; }
+        .iframe-wrapper { width: 100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .iframe-container iframe { width: 100%; height: 100%; border: none; display: block; overflow: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        .iframe-close-top { position: fixed; top: 15px; right: 15px; background-color: red; color: white; border: none; padding: 10px; cursor: pointer; z-index: 10000; font-size: 16px; font-weight: bold; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .loading-message { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; z-index: 10001; }
+    </style>
+    <script>
+        let isIframeOpen = false;
+        function openIframe(pair, rowId) {
+            document.querySelectorAll('.iframe-container').forEach(container => container.style.display = 'none');
+            const iframeContainer = document.getElementById('iframe-container-' + rowId);
+            const iframe = document.getElementById('analysis-iframe-' + rowId);
+            const loadingMessage = document.getElementById('loading-message-' + rowId);
+            if (iframeContainer && iframe && loadingMessage) {
+                loadingMessage.style.display = 'block';
+                iframeContainer.style.display = 'block';
+                isIframeOpen = true;
+                const formattedPair = pair.replace('index.html', '').toLowerCase();
+                iframe.src = `https://wolatil.com/gridbinance.php?koin=${formattedPair}&saat=4h`;
+                iframe.onload = () => { loadingMessage.style.display = 'none'; };
+                iframe.onerror = () => { loadingMessage.style.display = 'none'; };
+            }
+        }
+        function closeIframe(rowId) {
+            const iframeContainer = document.getElementById('iframe-container-' + rowId);
+            const iframe = document.getElementById('analysis-iframe-' + rowId);
+            const loadingMessage = document.getElementById('loading-message-' + rowId);
+            if (iframeContainer && iframe && loadingMessage) {
+                iframeContainer.style.display = 'none';
+                iframe.src = '';
+                loadingMessage.style.display = 'none';
+                isIframeOpen = false;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Her 60 saniyede bir sayfayı yenile
+            setInterval(() => location.reload(), 60000);
+        });
+    </script>
+</head>
+<body>
+<div class="table-container">
+            <table id="data-table">
+            <tr>
+                <th>Analiz</th><th>Çift</th><th>Eski Fiyat</th><th>Fiyat</th><th>Fiyat%</th>
+                <th>Hacim%</th><th>Hacim</th><th>Hacim Artışı</th>
+            </tr>
+                            <tr data-pair="PORTAL/USDT" data-row-id="PORTAL/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('PORTAL/USDT', 'PORTAL/USDT')">Analiz Et</button></td>
+                    <td>PORTAL/USDT</td>
+                    <td>$0.0121 USDT</td>
+                    <td>$0.0130 USDT</td>
+                    <td>%7.26</td>
+                    <td>%17.41</td>
+                    <td>1.3M USDT</td>
+                    <td>189.4K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-PORTAL/USDT" class="iframe-container">
+                            <div id="loading-message-PORTAL/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('PORTAL/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-PORTAL/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="RIF/USDT" data-row-id="RIF/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('RIF/USDT', 'RIF/USDT')">Analiz Et</button></td>
+                    <td>RIF/USDT</td>
+                    <td>$0.1040 USDT</td>
+                    <td>$0.1120 USDT</td>
+                    <td>%7.71</td>
+                    <td>%8.16</td>
+                    <td>4.7M USDT</td>
+                    <td>352.0K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-RIF/USDT" class="iframe-container">
+                            <div id="loading-message-RIF/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('RIF/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-RIF/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="ORCA/USDT" data-row-id="ORCA/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('ORCA/USDT', 'ORCA/USDT')">Analiz Et</button></td>
+                    <td>ORCA/USDT</td>
+                    <td>$1.1500 USDT</td>
+                    <td>$1.2500 USDT</td>
+                    <td>%8.82</td>
+                    <td>%61.55</td>
+                    <td>1.8M USDT</td>
+                    <td>684.0K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-ORCA/USDT" class="iframe-container">
+                            <div id="loading-message-ORCA/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('ORCA/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-ORCA/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="EPIC/USDT" data-row-id="EPIC/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('EPIC/USDT', 'EPIC/USDT')">Analiz Et</button></td>
+                    <td>EPIC/USDT</td>
+                    <td>$0.4910 USDT</td>
+                    <td>$0.5350 USDT</td>
+                    <td>%8.96</td>
+                    <td>%16.32</td>
+                    <td>1.1M USDT</td>
+                    <td>148.8K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-EPIC/USDT" class="iframe-container">
+                            <div id="loading-message-EPIC/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('EPIC/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-EPIC/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="ALLO/USDT" data-row-id="ALLO/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('ALLO/USDT', 'ALLO/USDT')">Analiz Et</button></td>
+                    <td>ALLO/USDT</td>
+                    <td>$0.3660 USDT</td>
+                    <td>$0.3950 USDT</td>
+                    <td>%8</td>
+                    <td>%10.87</td>
+                    <td>20.5M USDT</td>
+                    <td>2.0M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-ALLO/USDT" class="iframe-container">
+                            <div id="loading-message-ALLO/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('ALLO/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-ALLO/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="C/USDT" data-row-id="C/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('C/USDT', 'C/USDT')">Analiz Et</button></td>
+                    <td>C/USDT</td>
+                    <td>$0.0883 USDT</td>
+                    <td>$0.0945 USDT</td>
+                    <td>%7.02</td>
+                    <td>%33.7</td>
+                    <td>1.1M USDT</td>
+                    <td>267.4K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-C/USDT" class="iframe-container">
+                            <div id="loading-message-C/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('C/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-C/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="SPCXB/USDT" data-row-id="SPCXB/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('SPCXB/USDT', 'SPCXB/USDT')">Analiz Et</button></td>
+                    <td>SPCXB/USDT</td>
+                    <td>$202.1000 USDT</td>
+                    <td>$216.5000 USDT</td>
+                    <td>%7.13</td>
+                    <td>%22.89</td>
+                    <td>22.3M USDT</td>
+                    <td>4.2M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-SPCXB/USDT" class="iframe-container">
+                            <div id="loading-message-SPCXB/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('SPCXB/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-SPCXB/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="STRAX/USDT" data-row-id="STRAX/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('STRAX/USDT', 'STRAX/USDT')">Analiz Et</button></td>
+                    <td>STRAX/USDT</td>
+                    <td>$0.0108 USDT</td>
+                    <td>$0.0116 USDT</td>
+                    <td>%7.2</td>
+                    <td>%12.8</td>
+                    <td>3.8M USDT</td>
+                    <td>429.8K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-STRAX/USDT" class="iframe-container">
+                            <div id="loading-message-STRAX/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('STRAX/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-STRAX/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="MIRA/USDT" data-row-id="MIRA/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('MIRA/USDT', 'MIRA/USDT')">Analiz Et</button></td>
+                    <td>MIRA/USDT</td>
+                    <td>$0.0548 USDT</td>
+                    <td>$0.0593 USDT</td>
+                    <td>%8.21</td>
+                    <td>%3.94</td>
+                    <td>2.9M USDT</td>
+                    <td>110.7K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-MIRA/USDT" class="iframe-container">
+                            <div id="loading-message-MIRA/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('MIRA/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-MIRA/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="HMSTR/USDT" data-row-id="HMSTR/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('HMSTR/USDT', 'HMSTR/USDT')">Analiz Et</button></td>
+                    <td>HMSTR/USDT</td>
+                    <td>$0.0002 USDT</td>
+                    <td>$0.0002 USDT</td>
+                    <td>%7.77</td>
+                    <td>%8.28</td>
+                    <td>3.8M USDT</td>
+                    <td>287.7K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-HMSTR/USDT" class="iframe-container">
+                            <div id="loading-message-HMSTR/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('HMSTR/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-HMSTR/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="ATM/USDT" data-row-id="ATM/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('ATM/USDT', 'ATM/USDT')">Analiz Et</button></td>
+                    <td>ATM/USDT</td>
+                    <td>$1.1600 USDT</td>
+                    <td>$1.2700 USDT</td>
+                    <td>%9.21</td>
+                    <td>%42.16</td>
+                    <td>901.3K USDT</td>
+                    <td>267.3K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-ATM/USDT" class="iframe-container">
+                            <div id="loading-message-ATM/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('ATM/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-ATM/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="FIDA/USDT" data-row-id="FIDA/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('FIDA/USDT', 'FIDA/USDT')">Analiz Et</button></td>
+                    <td>FIDA/USDT</td>
+                    <td>$0.0244 USDT</td>
+                    <td>$0.0264 USDT</td>
+                    <td>%8.19</td>
+                    <td>%48.39</td>
+                    <td>3.0M USDT</td>
+                    <td>963.5K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-FIDA/USDT" class="iframe-container">
+                            <div id="loading-message-FIDA/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('FIDA/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-FIDA/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="TNSR/USDT" data-row-id="TNSR/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('TNSR/USDT', 'TNSR/USDT')">Analiz Et</button></td>
+                    <td>TNSR/USDT</td>
+                    <td>$0.0310 USDT</td>
+                    <td>$0.0334 USDT</td>
+                    <td>%7.74</td>
+                    <td>%69.09</td>
+                    <td>784.4K USDT</td>
+                    <td>320.5K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-TNSR/USDT" class="iframe-container">
+                            <div id="loading-message-TNSR/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('TNSR/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-TNSR/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="SYN/USDT" data-row-id="SYN/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('SYN/USDT', 'SYN/USDT')">Analiz Et</button></td>
+                    <td>SYN/USDT</td>
+                    <td>$0.0480 USDT</td>
+                    <td>$0.0517 USDT</td>
+                    <td>%7.71</td>
+                    <td>%10.17</td>
+                    <td>4.4M USDT</td>
+                    <td>407.9K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-SYN/USDT" class="iframe-container">
+                            <div id="loading-message-SYN/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('SYN/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-SYN/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="KMNO/USDT" data-row-id="KMNO/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('KMNO/USDT', 'KMNO/USDT')">Analiz Et</button></td>
+                    <td>KMNO/USDT</td>
+                    <td>$0.0179 USDT</td>
+                    <td>$0.0193 USDT</td>
+                    <td>%7.83</td>
+                    <td>%39.83</td>
+                    <td>742.3K USDT</td>
+                    <td>211.4K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-KMNO/USDT" class="iframe-container">
+                            <div id="loading-message-KMNO/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('KMNO/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-KMNO/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="AMP/USDT" data-row-id="AMP/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('AMP/USDT', 'AMP/USDT')">Analiz Et</button></td>
+                    <td>AMP/USDT</td>
+                    <td>$0.0005 USDT</td>
+                    <td>$0.0006 USDT</td>
+                    <td>%7.62</td>
+                    <td>%20.33</td>
+                    <td>1.6M USDT</td>
+                    <td>263.3K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-AMP/USDT" class="iframe-container">
+                            <div id="loading-message-AMP/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('AMP/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-AMP/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                            <tr data-pair="ROSE/USDT" data-row-id="ROSE/USDT">
+                    <td><button class="analiz-et" onclick="openIframe('ROSE/USDT', 'ROSE/USDT')">Analiz Et</button></td>
+                    <td>ROSE/USDT</td>
+                    <td>$0.0067 USDT</td>
+                    <td>$0.0072 USDT</td>
+                    <td>%7.49</td>
+                    <td>%60.46</td>
+                    <td>1.4M USDT</td>
+                    <td>514.4K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="iframe-container-ROSE/USDT" class="iframe-container">
+                            <div id="loading-message-ROSE/USDT" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('ROSE/USDT')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-ROSE/USDT" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                    </table>
+    </div>
+</body>
+
+<!-- Mirrored from www.wolatil.com/pump1.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "Wolatil.com",
+  "short_name": "Wolatil Kripto Analiz",
+  "start_url": "https://www.wolatil.com/",
+  "scope": "/",
+  "display": "minimal-ui",
+  "background_color": "#1a1a1d",
+  "theme_color": "#1a1a1d",
+  "icons": [
+    {
+      "src": "/android/Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android/Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

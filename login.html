@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:41:25 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap / Kayıt Ol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000000;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 25px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 20px #ffd700, 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            color: #ffffff;
+            backdrop-filter: blur(15px);
+            animation: slideUp 0.8s ease-out forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-container h2 {
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.4s ease;
+        }
+        .input-group input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 198, 255, 0.5);
+        }
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+        .btn, .signup-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn {
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: #fff;
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #0072ff, #00c6ff);
+            box-shadow: 0 8px 20px rgba(0, 198, 255, 0.5);
+            transform: translateY(-3px);
+        }
+        .signup-btn {
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            color: #fff;
+        }
+        .signup-btn:hover {
+            background: linear-gradient(90deg, #feb47b, #ff7e5f);
+            box-shadow: 0 8px 20px rgba(255, 126, 95, 0.5);
+            transform: translateY(-3px);
+        }
+        .social-login {
+            margin-top: 20px;
+            display: grid;
+            gap: 10px;
+        }
+        .social-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        .apple { background: #000000; border: 2px solid #ffd700; }
+        .google { background: #db4437; }
+        .twitter { background: #1da1f2; }
+        .microsoft { background: #00a4ef; }
+        .x-icon { width: 16px; height: 16px; fill: #fff; }
+        @media (max-width: 480px) { 
+            .login-container { padding: 20px; max-width: 100%; margin: 10px; } 
+            .login-container h2 { font-size: 1.5rem; margin-bottom: 20px; } 
+            .input-group input, .btn, .signup-btn, .social-btn { font-size: 0.85rem; padding: 10px; } 
+            .social-login { gap: 8px; } 
+            body { align-items: flex-start; padding-top: 20px; } 
+        }
+        #particles { position: absolute; width: 100%; height: 100%; z-index: -1; }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <div class="login-container">
+        <h2>Giriş Yap / Kayıt Ol</h2>
+        <div class="input-group">
+            <input type="email" id="email" placeholder="E-posta Adresiniz" required>
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Şifreniz" required>
+        </div>
+        <button class="btn" id="emailLogin"><i class="fas fa-envelope"></i> Giriş Yap</button>
+        <button class="signup-btn" id="register"><i class="fas fa-user-plus"></i> Kayıt Ol</button>
+        <div class="social-login">
+            <button class="social-btn apple" id="appleLogin"><i class="fab fa-apple"></i> Apple ile Giriş</button>
+            <button class="social-btn google" id="googleLogin"><i class="fab fa-google"></i> Google ile Giriş</button>
+            <button class="social-btn twitter" id="twitterLogin">
+                <svg class="x-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> X - Twitter ile Giriş
+            </button>
+            <button class="social-btn microsoft" id="microsoftLogin"><i class="fab fa-microsoft"></i> Microsoft ile Giriş</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { 
+            auth, 
+            googleProvider, 
+            twitterProvider, 
+            microsoftProvider, 
+            appleProvider, 
+            signInWithPopup, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            setPersistence, 
+            browserLocalPersistence, 
+            browserSessionPersistence 
+        } from './firebase-config.js';
+
+        async function setAuthPersistence(keepLoggedIn) {
+            try {
+                if (keepLoggedIn) {
+                    await setPersistence(auth, browserLocalPersistence);
+                    console.log("Persistence: browserLocalPersistence ayarlandı.");
+                } else {
+                    await setPersistence(auth, browserSessionPersistence);
+                    console.log("Persistence: browserSessionPersistence ayarlandı.");
+                }
+            } catch (error) {
+                console.warn("Persistence hatası, gizli mod olabilir:", error);
+                await setPersistence(auth, browserSessionPersistence);
+            }
+        }
+
+        // Yönlendirme fonksiyonu
+        function redirectToReturnUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const returnUrl = urlParams.get("returnUrl") || sessionStorage.getItem("returnUrl") || "/tarayici.html";
+            console.log("📌 Yönlendirme hedefi:", returnUrl);
+            sessionStorage.removeItem("returnUrl"); // Temizlik
+            window.location.href = returnUrl;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const emailLogin = document.getElementById('emailLogin');
+            const register = document.getElementById('register');
+            const appleLogin = document.getElementById('appleLogin');
+            const googleLogin = document.getElementById('googleLogin');
+            const twitterLogin = document.getElementById('twitterLogin');
+            const microsoftLogin = document.getElementById('microsoftLogin');
+
+            emailLogin.addEventListener('click', async () => {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                if (!email || !password) return alert("Lütfen e-posta ve şifre giriniz!");
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    const keepLoggedIn = confirm("Bu cihazda oturumumu hatırla?");
+                    await setAuthPersistence(keepLoggedIn);
+                    localStorage.setItem("isLoggedIn", "true");
+                    redirectToReturnUrl();
+                } catch (error) {
+                    if (error.code === "auth/wrong-password") alert("Hatalı şifre!");
+                    else if (error.code === "auth/user-not-found") alert("Kullanıcı bulunamadı!");
+                    else alert("Hata: " + error.message);
+                }
+            });
+
+            register.addEventListener('click', async () => {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                if (!email || !password) return alert("Lütfen e-posta ve şifre giriniz!");
+                try {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    const keepLoggedIn = confirm("Bu cihazda oturumumu hatırla?");
+                    await setAuthPersistence(keepLoggedIn);
+                    localStorage.setItem("isLoggedIn", "true");
+                    redirectToReturnUrl();
+                } catch (error) {
+                    if (error.code === "auth/email-already-in-use") alert("Bu e-posta zaten kayıtlı!");
+                    else if (error.code === "auth/weak-password") alert("Şifre en az 6 karakter olmalı!");
+                    else alert("Hata: " + error.message);
+                }
+            });
+
+            const socialLogin = async (provider) => {
+                try {
+                    await signInWithPopup(auth, provider);
+                    const keepLoggedIn = confirm("Bu cihazda oturumumu hatırla?");
+                    await setAuthPersistence(keepLoggedIn);
+                    localStorage.setItem("isLoggedIn", "true");
+                    redirectToReturnUrl();
+                } catch (error) {
+                    alert("Giriş başarısız: " + error.message);
+                }
+            };
+
+            appleLogin.addEventListener('click', () => socialLogin(appleProvider));
+            googleLogin.addEventListener('click', () => socialLogin(googleProvider));
+            twitterLogin.addEventListener('click', () => socialLogin(twitterProvider));
+            microsoftLogin.addEventListener('click', () => socialLogin(microsoftProvider));
+        });
+    </script>
+
+    <script>
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particlesArray = [];
+        const numberOfParticles = 100;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+                if (particlesArray[i].size <= 0.2) {
+                    particlesArray.splice(i, 1);
+                    i--;
+                    particlesArray.push(new Particle());
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+
+<!-- Mirrored from www.wolatil.com/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:41:26 GMT -->
+</html>

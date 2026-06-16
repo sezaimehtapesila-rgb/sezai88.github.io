@@ -1,0 +1,853 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/grafiktalep.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:16 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <script type="module" src="auth-check-include.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kripto Grafikler - Wolatil.com</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body {
+            background: #0d1117;
+            color: #e6edf3;
+            margin: 0;
+            padding: 30px;
+            line-height: 1.6;
+        }
+        .request-container {
+            background: linear-gradient(135deg, #161b22, #21262d);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 20px;
+            z-index: 10;
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .request-container form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .request-container input {
+            padding: 12px 15px;
+            width: 300px;
+            font-size: 16px;
+            background: #21262d;
+            color: #e6edf3;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        .request-container input:focus {
+            border-color: #58a6ff;
+            outline: none;
+        }
+        .request-btn, .refresh-btn, .analyze-btn, .generate-btn {
+            background: linear-gradient(135deg, #00cc99, #00b386);
+            border: none;
+            padding: 12px 25px;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+        }
+        .refresh-btn {
+            background: linear-gradient(135deg, #58a6ff, #1f6feb);
+        }
+        .analyze-btn {
+            background: linear-gradient(135deg, #ff6b6b, #e63946);
+        }
+        .request-btn:hover, .refresh-btn:hover, .analyze-btn:hover, .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 204, 153, 0.4);
+        }
+        .refresh-btn:hover {
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.4);
+        }
+        .analyze-btn:hover, .generate-btn:hover {
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+        .request-btn:disabled, .refresh-btn:disabled, .analyze-btn:disabled, .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #requestSuggestions {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 20;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #30363d;
+            transition: background 0.2s;
+        }
+        .suggestion-item:hover {
+            background: #30363d;
+        }
+        .loading-message {
+            color: #58a6ff;
+            font-style: italic;
+        }
+        .graph-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 450px));
+            gap: 25px;
+            justify-content: center;
+        }
+        .graph-card {
+            background: #161b22;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .graph-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .graph-card img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1839 / 891;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+        .graph-info {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #c9d1d9;
+        }
+        .fullscreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 17, 23, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .fullscreen.active {
+            display: flex;
+            opacity: 1;
+        }
+        .fullscreen img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 48px;
+            color: #fff;
+            cursor: pointer;
+            background: #21262d;
+            padding: 5px 15px;
+            border-radius: 50%;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .close-btn:hover {
+            background: #30363d;
+            transform: scale(1.1);
+        }
+        /* Modal Stilleri */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 17, 23, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background: #21262d;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            color: #e6edf3;
+            position: relative;
+        }
+        .modal-content h2 {
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        .modal-content p {
+            white-space: pre-wrap; /* Metnin formatını korur */
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .modal-close:hover {
+            color: #58a6ff;
+        }
+        /* Yükleme Animasyonu */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 17, 23, 0.8);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .loading-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #58a6ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        .loading-text {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #e6edf3;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 480px) {
+            .graph-grid {
+                grid-template-columns: 1fr;
+            }
+            .graph-card {
+                max-width: 100%;
+            }
+            .request-container {
+                padding: 15px;
+            }
+            .request-container form {
+                flex-direction: column;
+            }
+            .request-container input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .request-btn, .refresh-btn, .analyze-btn, .generate-btn {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            #requestSuggestions {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="request-container">
+        <form id="requestForm" onsubmit="handleRequestForm(event)">
+            <input type="text" id="requestSearch" name="coin" placeholder="Yeni grafik talep et (örn: GATE:BTC_USDT)" oninput="handleInput()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <input type="hidden" name="action" value="request_graph">
+            <button type="submit" class="request-btn">Talep Et</button>
+        </form>
+        <button class="refresh-btn" onclick="window.location.href = window.location.pathname">Yenile</button>
+        <div id="requestSuggestions"></div>
+    </div>
+
+    <div class="graph-grid" id="graphGrid">
+                    <div class="graph-card" data-coin="GATE:BEAT_USDT" data-timestamp="1781554473" onclick="showFullscreen('grafik/BEAT_USDT_GATEIO_2026-06-15_23-14-33.png')">
+                <img src="grafik/BEAT_USDT_GATEIO_2026-06-15_23-14-33.png" alt="GATE:BEAT_USDT">
+                <div class="graph-info">
+                    BEAT_USDT - GATE - Tarih: 15 Jun 2026 - Saat: 23:14                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:BEAT_USDT">
+                        <input type="hidden" name="file" value="grafik/BEAT_USDT_GATEIO_2026-06-15_23-14-33.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:BEAT_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:BOME_USDT" data-timestamp="1781554452" onclick="showFullscreen('grafik/BOME_USDT_GATEIO_2026-06-15_23-14-12.png')">
+                <img src="grafik/BOME_USDT_GATEIO_2026-06-15_23-14-12.png" alt="GATE:BOME_USDT">
+                <div class="graph-info">
+                    BOME_USDT - GATE - Tarih: 15 Jun 2026 - Saat: 23:14                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:BOME_USDT">
+                        <input type="hidden" name="file" value="grafik/BOME_USDT_GATEIO_2026-06-15_23-14-12.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:BOME_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:CYBER_USDT" data-timestamp="1781594268" onclick="showFullscreen('grafik/CYBER_USDT_GATEIO_2026-06-16_10-17-48.png')">
+                <img src="grafik/CYBER_USDT_GATEIO_2026-06-16_10-17-48.png" alt="GATE:CYBER_USDT">
+                <div class="graph-info">
+                    CYBER_USDT - GATE - Tarih: 16 Jun 2026 - Saat: 10:17                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:CYBER_USDT">
+                        <input type="hidden" name="file" value="grafik/CYBER_USDT_GATEIO_2026-06-16_10-17-48.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:CYBER_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="BINANCE:DASH_TRY" data-timestamp="1781515315" onclick="showFullscreen('grafik/DASH_TRY_BINANCE_2026-06-15_12-21-55.png')">
+                <img src="grafik/DASH_TRY_BINANCE_2026-06-15_12-21-55.png" alt="BINANCE:DASH_TRY">
+                <div class="graph-info">
+                    DASH_TRY - BINANCE - Tarih: 15 Jun 2026 - Saat: 12:21                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="BINANCE:DASH_TRY">
+                        <input type="hidden" name="file" value="grafik/DASH_TRY_BINANCE_2026-06-15_12-21-55.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="BINANCE:DASH_TRY">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="BINANCE:DOGE_USDT" data-timestamp="1781545727" onclick="showFullscreen('grafik/DOGE_USDT_BINANCE_2026-06-15_20-48-47.png')">
+                <img src="grafik/DOGE_USDT_BINANCE_2026-06-15_20-48-47.png" alt="BINANCE:DOGE_USDT">
+                <div class="graph-info">
+                    DOGE_USDT - BINANCE - Tarih: 15 Jun 2026 - Saat: 20:48                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="BINANCE:DOGE_USDT">
+                        <input type="hidden" name="file" value="grafik/DOGE_USDT_BINANCE_2026-06-15_20-48-47.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="BINANCE:DOGE_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:EGLD_USDT" data-timestamp="1781558972" onclick="showFullscreen('grafik/EGLD_USDT_GATEIO_2026-06-16_00-29-32.png')">
+                <img src="grafik/EGLD_USDT_GATEIO_2026-06-16_00-29-32.png" alt="GATE:EGLD_USDT">
+                <div class="graph-info">
+                    EGLD_USDT - GATE - Tarih: 16 Jun 2026 - Saat: 00:29                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:EGLD_USDT">
+                        <input type="hidden" name="file" value="grafik/EGLD_USDT_GATEIO_2026-06-16_00-29-32.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:EGLD_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:GPS_USDT" data-timestamp="1781558916" onclick="showFullscreen('grafik/GPS_USDT_GATEIO_2026-06-16_00-28-36.png')">
+                <img src="grafik/GPS_USDT_GATEIO_2026-06-16_00-28-36.png" alt="GATE:GPS_USDT">
+                <div class="graph-info">
+                    GPS_USDT - GATE - Tarih: 16 Jun 2026 - Saat: 00:28                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:GPS_USDT">
+                        <input type="hidden" name="file" value="grafik/GPS_USDT_GATEIO_2026-06-16_00-28-36.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:GPS_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:NOM_USDT" data-timestamp="1781545588" onclick="showFullscreen('grafik/NOM_USDT_GATEIO_2026-06-15_20-46-28.png')">
+                <img src="grafik/NOM_USDT_GATEIO_2026-06-15_20-46-28.png" alt="GATE:NOM_USDT">
+                <div class="graph-info">
+                    NOM_USDT - GATE - Tarih: 15 Jun 2026 - Saat: 20:46                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:NOM_USDT">
+                        <input type="hidden" name="file" value="grafik/NOM_USDT_GATEIO_2026-06-15_20-46-28.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:NOM_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:OPN_USDT" data-timestamp="1781523725" onclick="showFullscreen('grafik/OPN_USDT_GATEIO_2026-06-15_14-42-05.png')">
+                <img src="grafik/OPN_USDT_GATEIO_2026-06-15_14-42-05.png" alt="GATE:OPN_USDT">
+                <div class="graph-info">
+                    OPN_USDT - GATE - Tarih: 15 Jun 2026 - Saat: 14:42                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:OPN_USDT">
+                        <input type="hidden" name="file" value="grafik/OPN_USDT_GATEIO_2026-06-15_14-42-05.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:OPN_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:ROSE_USDT" data-timestamp="1781558874" onclick="showFullscreen('grafik/ROSE_USDT_GATEIO_2026-06-16_00-27-54.png')">
+                <img src="grafik/ROSE_USDT_GATEIO_2026-06-16_00-27-54.png" alt="GATE:ROSE_USDT">
+                <div class="graph-info">
+                    ROSE_USDT - GATE - Tarih: 16 Jun 2026 - Saat: 00:27                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:ROSE_USDT">
+                        <input type="hidden" name="file" value="grafik/ROSE_USDT_GATEIO_2026-06-16_00-27-54.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:ROSE_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:SIREN_USDT" data-timestamp="1781554184" onclick="showFullscreen('grafik/SIREN_USDT_GATEIO_2026-06-15_23-09-44.png')">
+                <img src="grafik/SIREN_USDT_GATEIO_2026-06-15_23-09-44.png" alt="GATE:SIREN_USDT">
+                <div class="graph-info">
+                    SIREN_USDT - GATE - Tarih: 15 Jun 2026 - Saat: 23:09                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:SIREN_USDT">
+                        <input type="hidden" name="file" value="grafik/SIREN_USDT_GATEIO_2026-06-15_23-09-44.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:SIREN_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:TNSR_USDT" data-timestamp="1781558156" onclick="showFullscreen('grafik/TNSR_USDT_GATEIO_2026-06-16_00-15-56.png')">
+                <img src="grafik/TNSR_USDT_GATEIO_2026-06-16_00-15-56.png" alt="GATE:TNSR_USDT">
+                <div class="graph-info">
+                    TNSR_USDT - GATE - Tarih: 16 Jun 2026 - Saat: 00:15                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:TNSR_USDT">
+                        <input type="hidden" name="file" value="grafik/TNSR_USDT_GATEIO_2026-06-16_00-15-56.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:TNSR_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="BINANCE:WLD_TRY" data-timestamp="1781599834" onclick="showFullscreen('grafik/WLD_TRY_BINANCE_2026-06-16_11-50-34.png')">
+                <img src="grafik/WLD_TRY_BINANCE_2026-06-16_11-50-34.png" alt="BINANCE:WLD_TRY">
+                <div class="graph-info">
+                    WLD_TRY - BINANCE - Tarih: 16 Jun 2026 - Saat: 11:50                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="BINANCE:WLD_TRY">
+                        <input type="hidden" name="file" value="grafik/WLD_TRY_BINANCE_2026-06-16_11-50-34.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="BINANCE:XLM_USDT" data-timestamp="1781545684" onclick="showFullscreen('grafik/XLM_USDT_BINANCE_2026-06-15_20-48-04.png')">
+                <img src="grafik/XLM_USDT_BINANCE_2026-06-15_20-48-04.png" alt="BINANCE:XLM_USDT">
+                <div class="graph-info">
+                    XLM_USDT - BINANCE - Tarih: 15 Jun 2026 - Saat: 20:48                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="BINANCE:XLM_USDT">
+                        <input type="hidden" name="file" value="grafik/XLM_USDT_BINANCE_2026-06-15_20-48-04.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="BINANCE:XLM_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+                    <div class="graph-card" data-coin="GATE:XLM_USDT" data-timestamp="1781545609" onclick="showFullscreen('grafik/XLM_USDT_GATEIO_2026-06-15_20-46-49.png')">
+                <img src="grafik/XLM_USDT_GATEIO_2026-06-15_20-46-49.png" alt="GATE:XLM_USDT">
+                <div class="graph-info">
+                    XLM_USDT - GATE - Tarih: 15 Jun 2026 - Saat: 20:46                    <br>
+                    <form class="analyze-form" onsubmit="handleAnalyzeForm(event, this)">
+                        <input type="hidden" name="coin" value="GATE:XLM_USDT">
+                        <input type="hidden" name="file" value="grafik/XLM_USDT_GATEIO_2026-06-15_20-46-49.png">
+                        <input type="hidden" name="action" value="analyze_graph">
+                        <button type="submit" class="analyze-btn" onclick="event.stopPropagation()">Analiz</button>
+                    </form>
+                                            <form class="generate-form" onsubmit="handleRequestForm(event, this)">
+                            <input type="hidden" name="coin" value="GATE:XLM_USDT">
+                            <input type="hidden" name="action" value="request_graph">
+                            <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                        </form>
+                                    </div>
+            </div>
+            </div>
+
+    <div class="fullscreen" id="fullscreen">
+        <span class="close-btn" onclick="hideFullscreen()">×</span>
+        <img id="fullscreenImg" src="#">
+    </div>
+
+    <!-- Analiz Modal -->
+    <div class="modal" id="analysisModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAnalysisModal()">×</button>
+            <h2 id="modalTitle">Analiz Sonucu</h2>
+            <p id="analysisText"></p>
+        </div>
+    </div>
+
+    <!-- Yükleme Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <div class="loading-text">Lütfen bekleyin...</div>
+        </div>
+    </div>
+
+    <script>
+        let coins = [];
+        let graphData = [{"file":"grafik\/BEAT_USDT_GATEIO_2026-06-15_23-14-33.png","coin":"GATE:BEAT_USDT","coin_name":"BEAT_USDT","exchange":"GATE","date":"15 Jun 2026","time":"23:14","timestamp":1781554473},{"file":"grafik\/BOME_USDT_GATEIO_2026-06-15_23-14-12.png","coin":"GATE:BOME_USDT","coin_name":"BOME_USDT","exchange":"GATE","date":"15 Jun 2026","time":"23:14","timestamp":1781554452},{"file":"grafik\/CYBER_USDT_GATEIO_2026-06-16_10-17-48.png","coin":"GATE:CYBER_USDT","coin_name":"CYBER_USDT","exchange":"GATE","date":"16 Jun 2026","time":"10:17","timestamp":1781594268},{"file":"grafik\/DASH_TRY_BINANCE_2026-06-15_12-21-55.png","coin":"BINANCE:DASH_TRY","coin_name":"DASH_TRY","exchange":"BINANCE","date":"15 Jun 2026","time":"12:21","timestamp":1781515315},{"file":"grafik\/DOGE_USDT_BINANCE_2026-06-15_20-48-47.png","coin":"BINANCE:DOGE_USDT","coin_name":"DOGE_USDT","exchange":"BINANCE","date":"15 Jun 2026","time":"20:48","timestamp":1781545727},{"file":"grafik\/EGLD_USDT_GATEIO_2026-06-16_00-29-32.png","coin":"GATE:EGLD_USDT","coin_name":"EGLD_USDT","exchange":"GATE","date":"16 Jun 2026","time":"00:29","timestamp":1781558972},{"file":"grafik\/GPS_USDT_GATEIO_2026-06-16_00-28-36.png","coin":"GATE:GPS_USDT","coin_name":"GPS_USDT","exchange":"GATE","date":"16 Jun 2026","time":"00:28","timestamp":1781558916},{"file":"grafik\/NOM_USDT_GATEIO_2026-06-15_20-46-28.png","coin":"GATE:NOM_USDT","coin_name":"NOM_USDT","exchange":"GATE","date":"15 Jun 2026","time":"20:46","timestamp":1781545588},{"file":"grafik\/OPN_USDT_GATEIO_2026-06-15_14-42-05.png","coin":"GATE:OPN_USDT","coin_name":"OPN_USDT","exchange":"GATE","date":"15 Jun 2026","time":"14:42","timestamp":1781523725},{"file":"grafik\/ROSE_USDT_GATEIO_2026-06-16_00-27-54.png","coin":"GATE:ROSE_USDT","coin_name":"ROSE_USDT","exchange":"GATE","date":"16 Jun 2026","time":"00:27","timestamp":1781558874},{"file":"grafik\/SIREN_USDT_GATEIO_2026-06-15_23-09-44.png","coin":"GATE:SIREN_USDT","coin_name":"SIREN_USDT","exchange":"GATE","date":"15 Jun 2026","time":"23:09","timestamp":1781554184},{"file":"grafik\/TNSR_USDT_GATEIO_2026-06-16_00-15-56.png","coin":"GATE:TNSR_USDT","coin_name":"TNSR_USDT","exchange":"GATE","date":"16 Jun 2026","time":"00:15","timestamp":1781558156},{"file":"grafik\/WLD_TRY_BINANCE_2026-06-16_11-50-34.png","coin":"BINANCE:WLD_TRY","coin_name":"WLD_TRY","exchange":"BINANCE","date":"16 Jun 2026","time":"11:50","timestamp":1781599834},{"file":"grafik\/XLM_USDT_BINANCE_2026-06-15_20-48-04.png","coin":"BINANCE:XLM_USDT","coin_name":"XLM_USDT","exchange":"BINANCE","date":"15 Jun 2026","time":"20:48","timestamp":1781545684},{"file":"grafik\/XLM_USDT_GATEIO_2026-06-15_20-46-49.png","coin":"GATE:XLM_USDT","coin_name":"XLM_USDT","exchange":"GATE","date":"15 Jun 2026","time":"20:46","timestamp":1781545609}];
+        const currentTime = 1781601636;
+        let requestTimestamps = [];
+        let isAnalyzing = {}; // Analiz durumunu takip eden obje
+
+        async function fetchCoins() {
+            const suggestions = document.getElementById("requestSuggestions");
+            suggestions.innerHTML = '<div class="suggestion-item loading-message">Lütfen bekleyin, coin\'ler yükleniyor...</div>';
+            suggestions.style.display = "block";
+
+            try {
+                const gateioResponse = await fetch("gateio_data.json");
+                const gateioData = await gateioResponse.json();
+                const gateioCoins = gateioData
+                    .map(item => 'GATE:' + item.currency_pair.toUpperCase())
+                    .filter(coin => !/(5L|5S|3L|3S)_USDT$/.test(coin));
+
+                const binanceResponse = await fetch("binance_coin_pairs.json");
+                const binanceData = await binanceResponse.json();
+                const binanceCoins = [];
+                for (const base in binanceData) {
+                    binanceData[base].forEach(quote => {
+                        binanceCoins.push(`BINANCE:${base}_${quote}`);
+                    });
+                }
+
+                coins = [...gateioCoins, ...binanceCoins].sort((a, b) => a.length - b.length);
+
+                if (!document.getElementById("requestSearch").value) {
+                    suggestions.style.display = "none";
+                    suggestions.innerHTML = "";
+                }
+            } catch (error) {
+                console.error("JSON yüklenirken hata oluştu:", error);
+                suggestions.innerHTML = '<div class="suggestion-item">Coin\'ler yüklenemedi!</div>';
+            }
+        }
+
+        function handleInput() {
+            filterGraphs();
+            searchRequestCoins();
+        }
+
+        function searchRequestCoins() {
+            const input = document.getElementById("requestSearch").value.toUpperCase();
+            const suggestions = document.getElementById("requestSuggestions");
+            suggestions.innerHTML = "";
+
+            if (input.length === 0) {
+                suggestions.style.display = "none";
+                return;
+            }
+
+            const filtered = coins.filter(coin => coin.includes(input))
+                .sort((a, b) => a.length - b.length);
+
+            filtered.forEach(coin => {
+                const div = document.createElement("div");
+                div.innerText = coin;
+                div.className = "suggestion-item";
+                div.onclick = () => selectRequestCoin(coin);
+                suggestions.appendChild(div);
+            });
+
+            suggestions.style.display = filtered.length ? "block" : "none";
+        }
+
+        function selectRequestCoin(coin) {
+            document.getElementById("requestSearch").value = coin;
+            document.getElementById("requestSuggestions").style.display = "none";
+            filterGraphs();
+        }
+
+        function filterGraphs() {
+            const input = document.getElementById("requestSearch").value.toUpperCase();
+            const graphGrid = document.getElementById("graphGrid");
+            graphGrid.innerHTML = "";
+
+            if (!graphData || graphData.length === 0) {
+                console.warn("graphData boş veya tanımsız!");
+                return;
+            }
+
+            if (input.length === 0) {
+                graphData.forEach(graph => renderGraphCard(graph));
+            } else {
+                const matchingGraph = graphData.find(g => g.coin === input);
+                if (matchingGraph) {
+                    renderGraphCard(matchingGraph);
+                }
+            }
+        }
+
+        function renderGraphCard(graph) {
+            const graphGrid = document.getElementById("graphGrid");
+            const card = document.createElement('div');
+            card.className = 'graph-card';
+            card.dataset.coin = graph.coin;
+            card.dataset.timestamp = graph.timestamp;
+            card.onclick = () => showFullscreen(graph.file);
+
+            const img = document.createElement('img');
+            img.src = graph.file;
+            img.alt = graph.coin;
+
+            const info = document.createElement('div');
+            info.className = 'graph-info';
+            info.innerHTML = `${graph.coin_name} - ${graph.exchange} - Tarih: ${graph.date} - Saat: ${graph.time}<br>`;
+
+            const analyzeForm = document.createElement('form');
+            analyzeForm.className = 'analyze-form';
+            analyzeForm.onsubmit = (e) => handleAnalyzeForm(e, analyzeForm);
+            analyzeForm.innerHTML = `
+                <input type="hidden" name="coin" value="${graph.coin}">
+                <input type="hidden" name="file" value="${graph.file}">
+                <input type="hidden" name="action" value="analyze_graph">
+                <button type="submit" class="analyze-btn" onclick="event.stopPropagation()" data-coin="${graph.coin}">Analiz</button>
+            `;
+            info.appendChild(analyzeForm);
+
+            if ((currentTime - graph.timestamp) > 3600) {
+                const form = document.createElement('form');
+                form.className = 'generate-form';
+                form.onsubmit = (e) => handleRequestForm(e, form);
+                form.innerHTML = `
+                    <input type="hidden" name="coin" value="${graph.coin}">
+                    <input type="hidden" name="action" value="request_graph">
+                    <button type="submit" class="generate-btn" onclick="event.stopPropagation()">Yeni Grafik Üret</button>
+                `;
+                info.appendChild(form);
+            }
+
+            card.appendChild(img);
+            card.appendChild(info);
+            graphGrid.appendChild(card);
+        }
+
+        function showFullscreen(src) {
+            const fullscreen = document.getElementById("fullscreen");
+            const fullscreenImg = document.getElementById("fullscreenImg");
+            fullscreen.style.display = 'flex';
+            fullscreenImg.src = src;
+            setTimeout(() => fullscreen.classList.add('active'), 10);
+        }
+
+        function hideFullscreen() {
+            const fullscreen = document.getElementById("fullscreen");
+            fullscreen.classList.remove('active');
+            setTimeout(() => {
+                fullscreen.style.display = 'none';
+            }, 300);
+        }
+
+        // Modal fonksiyonları
+        function showAnalysisModal(analysis, coin) {
+            const modal = document.getElementById("analysisModal");
+            const analysisText = document.getElementById("analysisText");
+            const modalTitle = document.getElementById("modalTitle");
+            console.log("Modal açılıyor, analiz:", analysis, "Coin:", coin);
+            modalTitle.textContent = `${coin} Analiz Sonucu`;
+            analysisText.textContent = analysis;
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function closeAnalysisModal() {
+            const modal = document.getElementById("analysisModal");
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Yükleme overlay fonksiyonları
+        function showLoadingOverlay() {
+            const overlay = document.getElementById("loadingOverlay");
+            overlay.style.display = 'flex';
+            setTimeout(() => overlay.classList.add('active'), 10);
+        }
+
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById("loadingOverlay");
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 300);
+        }
+
+        // AJAX ile form gönderimi
+        async function handleRequestForm(event, form) {
+            event.preventDefault();
+            const formData = new FormData(form || document.getElementById("requestForm"));
+            const button = form ? form.querySelector('button') : document.querySelector('#requestForm button');
+            button.disabled = true;
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.success);
+                    if (!form) document.getElementById("requestSearch").value = '';
+                } else if (result.error) {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error("Grafik talebi hatası:", error);
+                alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function handleAnalyzeForm(event, form) {
+            event.preventDefault();
+            const coin = form.querySelector('input[name="coin"]').value;
+            if (isAnalyzing[coin]) {
+                alert("Bu coin için analiz zaten işleniyor. Lütfen bekleyin.");
+                return;
+            }
+
+            const button = form.querySelector('.analyze-btn');
+            button.disabled = true;
+            isAnalyzing[coin] = true;
+            showLoadingOverlay();
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showAnalysisModal(result.success, result.coin);
+                } else if (result.error) {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error("Analiz hatası:", error);
+                alert("Analiz alınamadı. Lütfen tekrar deneyin.");
+            } finally {
+                button.disabled = false;
+                isAnalyzing[coin] = false;
+                hideLoadingOverlay();
+            }
+        }
+
+        window.onload = () => {
+            fetchCoins();
+            document.getElementById("requestSearch").addEventListener("input", handleInput);
+        };
+    </script>
+</body>
+
+<!-- Mirrored from www.wolatil.com/grafiktalep.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:41 GMT -->
+</html>

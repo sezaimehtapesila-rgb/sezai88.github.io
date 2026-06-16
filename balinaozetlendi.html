@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/balinaozetlendi.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balinaların Son 24 Saat Transferleri</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #00ccff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            border-bottom: 2px solid #00ccff;
+            padding-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #2a2a2a;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background-color: #3a3a3a;
+            font-weight: bold;
+        }
+        .coin-name {
+            color: #00ccff;
+            font-weight: bold;
+        }
+        .positive { color: #00ff00; }
+        .negative { color: #ff0000; }
+        .details-btn {
+            background-color: #555;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .details-btn:hover {
+            background-color: #777;
+        }
+        .details {
+            display: none;
+            background-color: #333;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+        }
+        .hourly-table {
+            width: 100%;
+            margin-top: 10px;
+            background-color: #2a2a2a;
+        }
+        .hourly-table th, .hourly-table td {
+            padding: 8px;
+            border-bottom: 1px solid #555;
+        }
+        .sub-details {
+            margin-top: 15px;
+        }
+        .sub-details h4 {
+            margin: 10px 0 5px;
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+        .sub-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #2a2a2a;
+            margin-bottom: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        .sub-table th, .sub-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #555;
+        }
+        .sub-table th {
+            background-color: #444;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            th, td {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+            .details-btn {
+                font-size: 0.8em;
+                padding: 4px 8px;
+            }
+            .hourly-table th, .hourly-table td {
+                font-size: 0.8em;
+                padding: 6px;
+            }
+            .sub-table th, .sub-table td {
+                font-size: 0.8em;
+                padding: 6px;
+            }
+            .sub-details h4 {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<script type="module" src="auth-check-include.js"></script>
+<body>
+    <h1>Balinaların Son 24 Saat Transferleri</h1><table><tr><th>Coin</th><th>Borsalara Giren</th><th>Borsalardan Çıkan</th><th>Fark</th><th>Cüzdanlar Arası</th><th>Detaylar</th></tr><table><tr><td colspan='6'>Tabloya eklenecek veri bulunamadı. Lütfen veri kaynağını kontrol edin.</td></tr>    </table>
+
+    <script>
+        function closeAllDetails(exceptId = null) {
+            var allDetails = document.querySelectorAll('.details[id^="details-"]');
+            allDetails.forEach(function(detail) {
+                if (exceptId === null || detail.id !== 'details-' + exceptId) {
+                    detail.style.display = 'none';
+                }
+            });
+        }
+
+        function closeAllSubDetails(exceptId = null) {
+            var allSubDetails = document.querySelectorAll('[id^="subdetails-"]');
+            allSubDetails.forEach(function(subDetail) {
+                if (exceptId === null || subDetail.id !== 'subdetails-' + exceptId) {
+                    subDetail.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleDetails(id) {
+            var details = document.getElementById('details-' + id);
+            var isCurrentlyOpen = details.style.display === 'table-row';
+
+            if (isCurrentlyOpen) {
+                details.style.display = 'none';
+                closeAllSubDetails();
+            } else {
+                closeAllDetails(id);
+                closeAllSubDetails();
+                details.style.display = 'table-row';
+            }
+        }
+
+        function toggleSubDetails(id) {
+            var subdetails = document.getElementById('subdetails-' + id);
+            var isCurrentlyOpen = subdetails.style.display === 'table-row';
+
+            if (isCurrentlyOpen) {
+                subdetails.style.display = 'none';
+            } else {
+                closeAllSubDetails(id);
+                subdetails.style.display = 'table-row';
+            }
+        }
+    </script>
+</body>
+
+<!-- Mirrored from www.wolatil.com/balinaozetlendi.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+</html>

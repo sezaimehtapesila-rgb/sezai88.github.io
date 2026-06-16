@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from www.wolatil.com/watchlist.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:41:25 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head><script type="module" src="auth-check-include.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #2d2d2d, #000);
+            z-index: -1;
+            animation: bg-animation 10s infinite alternate;
+        }
+        @keyframes bg-animation {
+            0% {
+                background: radial-gradient(circle, #2d2d2d, #000);
+            }
+            100% {
+                background: radial-gradient(circle, #444, #000);
+            }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .toggle-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .toggle-buttons button {
+            background: none;
+            border: 2px solid #444;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        .toggle-buttons button.active {
+            background: #444;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input {
+            width: calc(100% - 30px);
+            padding: 15px;
+            border: none;
+            border-radius: 20px;
+            background: #1c1c1c;
+            color: white;
+            font-size: 16px;
+            transition: 0.3s ease;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: #444;
+            border: none;
+            color: white;
+            border-radius: 25px;
+        }
+        .error, .success {
+            margin-bottom: 15px;
+        }
+		button.submit-button.clicked {
+    background: #666; /* Tıklanıldığında koyulaşan renk */
+    transform: scale(0.95); /* Hafif küçülme efekti */
+    transition: background 0.3s ease, transform 0.1s ease; /* Animasyonlu geçiş */
+}
+    </style>
+</head>
+<body>
+<div class="background"></div>
+<div class="container">
+    <h2 id="form-title">Giriş Yap</h2>
+
+        
+    <div class="toggle-buttons">
+        <button id="login-btn" class="active" onclick="toggleForm('login')">Giriş Yap</button>
+        <button id="register-btn" onclick="toggleForm('register')">Kayıt Ol</button>
+        <button id="forgot-password-btn" onclick="toggleForm('forgot_password')">Şifremi Unuttum</button>
+    </div>
+
+    <form method="POST" id="auth-form">
+        <div class="form-group">
+    <input type="text" id="username" name="username" placeholder="Kullanıcı Adı" autocapitalize="none" spellcheck="false">
+</div>
+        <div class="form-group" id="email-group" style="display: none;">
+    <input type="email" id="email" name="email" placeholder="E-posta" autocapitalize="none" spellcheck="false">
+</div>
+        <div class="form-group" id="password-group">
+    <input type="password" id="password" name="password" placeholder="Şifre" autocapitalize="none" spellcheck="false">
+</div>
+    <div class="form-group" id="confirm-password-group" style="display: none;">
+    <input type="password" id="confirm-password" name="confirm_password" placeholder="Şifreyi Onayla" autocapitalize="none" spellcheck="false">
+</div>
+     <div class="form-group" id="new-password-group" style="display: none;">
+    <input type="password" id="new-password" name="new_password" placeholder="Yeni Şifre" autocapitalize="none" spellcheck="false">
+</div>
+       <div class="form-group" id="confirm-new-password-group" style="display: none;">
+    <input type="password" id="confirm-new-password" name="confirm_new_password" placeholder="Yeni Şifreyi Onayla" autocapitalize="none" spellcheck="false">
+</div>
+        <input type="hidden" name="action" id="form-action" value="login">
+        <button type="submit">Gönder</button>
+    </form>
+</div>
+
+<script>
+    function toggleForm(action) {
+        document.getElementById('form-action').value = action;
+
+        // Form başlığını değiştir
+        const formTitle = document.getElementById('form-title');
+        const emailGroup = document.getElementById('email-group');
+        const passwordGroup = document.getElementById('password-group');
+        const confirmPasswordGroup = document.getElementById('confirm-password-group');
+        const newPasswordGroup = document.getElementById('new-password-group');
+        const confirmNewPasswordGroup = document.getElementById('confirm-new-password-group');
+
+        if (action === 'login') {
+            formTitle.textContent = 'Giriş Yap';
+            emailGroup.style.display = 'none';
+            passwordGroup.style.display = 'block';
+            confirmPasswordGroup.style.display = 'none';
+            newPasswordGroup.style.display = 'none';
+            confirmNewPasswordGroup.style.display = 'none';
+        } else if (action === 'register') {
+            formTitle.textContent = 'Kayıt Ol';
+            emailGroup.style.display = 'block';
+            passwordGroup.style.display = 'block';
+            confirmPasswordGroup.style.display = 'block';
+            newPasswordGroup.style.display = 'none';
+            confirmNewPasswordGroup.style.display = 'none';
+        } else if (action === 'forgot_password') {
+            formTitle.textContent = 'Şifremi Unuttum';
+            emailGroup.style.display = 'block';
+            passwordGroup.style.display = 'none';
+            confirmPasswordGroup.style.display = 'none';
+            newPasswordGroup.style.display = 'block';
+            confirmNewPasswordGroup.style.display = 'block';
+        }
+    }
+	
+	// Tüm butonlar için tıklama efekti ekle
+document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', () => {
+        button.classList.add('clicked'); // "clicked" sınıfını ekle
+        setTimeout(() => button.classList.remove('clicked'), 200); // 200ms sonra "clicked" sınıfını kaldır
+    });
+});
+</script>
+</body>
+
+<!-- Mirrored from www.wolatil.com/watchlist.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:41:25 GMT -->
+</html>

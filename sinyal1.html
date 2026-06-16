@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/sinyal1.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koin Analizi - Sinyal</title>
+    <style>
+        body { background-color: black; color: white; font-family: Arial, sans-serif; margin: 0; padding: 10px; }
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 6px; text-align: left; border-bottom: 1px solid #444; white-space: nowrap; font-size: 14px; }
+        th { background-color: #222; color: white; }
+        th:nth-child(4), td:nth-child(4), th:nth-child(5), td:nth-child(5), th:nth-child(6), td:nth-child(6),
+        th:nth-child(7), td:nth-child(7), th:nth-child(8), td:nth-child(8), th:nth-child(9), td:nth-child(9),
+        th:nth-child(10), td:nth-child(10) { text-align: right; }
+        .analiz-et { background-color: green; color: white; cursor: pointer; }
+        .dusebilir { background-color: #FF0000; color: white; cursor: default; }
+        .bekle { background-color: transparent; color: white; cursor: default; }
+        .iframe-container { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); z-index: 9999; overflow-y: auto; box-sizing: border-box; }
+        .iframe-wrapper { width: 100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .iframe-container iframe { width: 100%; height: 100%; border: none; display: block; overflow: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        .iframe-close-top { position: fixed; top: 15px; right: 15px; background-color: red; color: white; border: none; padding: 10px; cursor: pointer; z-index: 10000; font-size: 16px; font-weight: bold; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .loading-message { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; z-index: 10001; }
+    </style>
+    <script>
+        let isIframeOpen = false;
+        function openIframe(pair, rowId) {
+            document.querySelectorAll('.iframe-container').forEach(container => container.style.display = 'none');
+            const iframeContainer = document.getElementById('iframe-container-' + rowId);
+            const iframe = document.getElementById('analysis-iframe-' + rowId);
+            const loadingMessage = document.getElementById('loading-message-' + rowId);
+            if (iframeContainer && iframe && loadingMessage) {
+                loadingMessage.style.display = 'block';
+                iframeContainer.style.display = 'block';
+                isIframeOpen = true;
+                const formattedPair = pair.replace('_', '').toLowerCase();
+                iframe.src = `https://wolatil.com/gridbinance.php?koin=${formattedPair}&saat=4h`;
+                iframe.onload = () => { loadingMessage.style.display = 'none'; };
+                iframe.onerror = () => { loadingMessage.style.display = 'none'; };
+            }
+        }
+        function closeIframe(rowId) {
+            const iframeContainer = document.getElementById('iframe-container-' + rowId);
+            const iframe = document.getElementById('analysis-iframe-' + rowId);
+            const loadingMessage = document.getElementById('loading-message-' + rowId);
+            if (iframeContainer && iframe && loadingMessage) {
+                iframeContainer.style.display = 'none';
+                iframe.src = '';
+                loadingMessage.style.display = 'none';
+                isIframeOpen = false;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('tr.analiz-et').forEach(row => {
+                const pair = row.getAttribute('data-pair');
+                const rowId = row.getAttribute('data-row-id');
+                if (pair && rowId) row.addEventListener('click', () => openIframe(pair, rowId));
+            });
+            // Her 60 saniyede bir sayfayı yenile
+            setInterval(() => location.reload(), 60000);
+        });
+    </script>
+</head>
+<body><script type="module" src="auth-check-include.js"></script>
+<div class="table-container">
+            <table id="data-table">
+            <tr>
+                <th>Çift</th><th>DURUM</th><th>Puan</th><th>Fiyat</th><th>1gün Değişim</th>
+                <th>1dk Değişim</th><th>Hacim (1dk)</th><th>Alış (1dk)</th><th>Satış (1dk)</th><th>1gün Hacim</th>
+            </tr>
+                                            <tr class="bekle" >
+                    <td>BABYUSDT</td>
+                    <td>Bekle</td>
+                    <td>26</td>
+                    <td>0.01793</td>
+                    <td>%5.4</td>
+                    <td>%0.6</td>
+                    <td>956.8K USDT</td>
+                    <td>281.6K USDT</td>
+                    <td>675.2K USDT</td>
+                    <td>88.6M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-0" class="iframe-container">
+                            <div id="loading-message-0" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('0')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-0" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>PORTALUSDT</td>
+                    <td>Bekle</td>
+                    <td>30</td>
+                    <td>0.01388</td>
+                    <td>%13.7</td>
+                    <td>%1.8</td>
+                    <td>105.9K USDT</td>
+                    <td>50.5K USDT</td>
+                    <td>55.4K USDT</td>
+                    <td>1.8M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-1" class="iframe-container">
+                            <div id="loading-message-1" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('1')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-1" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>RIFUSDT</td>
+                    <td>Bekle</td>
+                    <td>20</td>
+                    <td>0.1209</td>
+                    <td>%18.6</td>
+                    <td>%2.3</td>
+                    <td>24.1K USDT</td>
+                    <td>13.7K USDT</td>
+                    <td>10.4K USDT</td>
+                    <td>4.7M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-2" class="iframe-container">
+                            <div id="loading-message-2" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('2')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-2" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>EPICUSDT</td>
+                    <td>Bekle</td>
+                    <td>20</td>
+                    <td>0.599</td>
+                    <td>%17.8</td>
+                    <td>%2</td>
+                    <td>34.2K USDT</td>
+                    <td>15.8K USDT</td>
+                    <td>18.4K USDT</td>
+                    <td>1.9M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-3" class="iframe-container">
+                            <div id="loading-message-3" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('3')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-3" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>STGUSDT</td>
+                    <td>Bekle</td>
+                    <td>25</td>
+                    <td>0.2289</td>
+                    <td>%-5.3</td>
+                    <td>%2.1</td>
+                    <td>166.6K USDT</td>
+                    <td>109.0K USDT</td>
+                    <td>57.6K USDT</td>
+                    <td>6.9M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-4" class="iframe-container">
+                            <div id="loading-message-4" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('4')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-4" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>QUICKUSDT</td>
+                    <td>Bekle</td>
+                    <td>25</td>
+                    <td>0.00790</td>
+                    <td>%33.3</td>
+                    <td>%2.1</td>
+                    <td>39.3K USDT</td>
+                    <td>18.8K USDT</td>
+                    <td>20.5K USDT</td>
+                    <td>380.9K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-5" class="iframe-container">
+                            <div id="loading-message-5" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('5')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-5" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>NIGHTUSDT</td>
+                    <td>Bekle</td>
+                    <td>21</td>
+                    <td>0.03431</td>
+                    <td>%3.4</td>
+                    <td>%1</td>
+                    <td>130.8K USDT</td>
+                    <td>90.3K USDT</td>
+                    <td>40.5K USDT</td>
+                    <td>21.0M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-6" class="iframe-container">
+                            <div id="loading-message-6" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('6')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-6" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>ALGOUSDT</td>
+                    <td>Bekle</td>
+                    <td>-10</td>
+                    <td>0.0970</td>
+                    <td>%1.3</td>
+                    <td>%0.5</td>
+                    <td>62.6K USDT</td>
+                    <td>23.6K USDT</td>
+                    <td>39.0K USDT</td>
+                    <td>3.8M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-7" class="iframe-container">
+                            <div id="loading-message-7" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('7')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-7" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>TSTUSDT</td>
+                    <td>Bekle</td>
+                    <td>-5</td>
+                    <td>0.01192</td>
+                    <td>%-11.7</td>
+                    <td>%2.4</td>
+                    <td>89.1K USDT</td>
+                    <td>41.2K USDT</td>
+                    <td>47.9K USDT</td>
+                    <td>5.1M USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-8" class="iframe-container">
+                            <div id="loading-message-8" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('8')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-8" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                                            <tr class="bekle" >
+                    <td>TUTUSDT</td>
+                    <td>Bekle</td>
+                    <td>0</td>
+                    <td>0.01075</td>
+                    <td>%-2.3</td>
+                    <td>%1.3</td>
+                    <td>28.9K USDT</td>
+                    <td>12.1K USDT</td>
+                    <td>16.8K USDT</td>
+                    <td>383.0K USDT</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                        <div id="iframe-container-9" class="iframe-container">
+                            <div id="loading-message-9" class="loading-message">Lütfen bekleyin analiz yapılıyor...</div>
+                            <button class="iframe-close-top" onclick="closeIframe('9')">X</button>
+                            <div class="iframe-wrapper">
+                                <iframe id="analysis-iframe-9" src="#" scrolling="yes"></iframe>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                    </table>
+    </div>
+</body>
+
+<!-- Mirrored from www.wolatil.com/sinyal1.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+</html>

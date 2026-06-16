@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/balinatablosu.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head><script type="module" src="auth-check-include.js"></script>
+    <script type="module" src="auth-check-include.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balina Tablosu</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 90%; 
+            margin: 20px auto;
+            background-color: #000; 
+            color: #fff; 
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+        th, td { 
+            padding: 12px 15px; 
+            text-align: left; 
+            border-bottom: 1px solid #444; 
+        }
+        th { 
+            background-color: #222;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #111;
+        }
+        tr:hover {
+            background-color: #333;
+            transition: background-color 0.3s;
+        }
+        .type-buy {
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .type-sell {
+            background-color: #F44336;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <table id="balinaTable">
+        <thead>
+            <tr>
+                <th>Saat</th>
+                <th>Koin Adı</th>
+                <th>Tür</th>
+                <th>Adet</th>
+                <th>Fiyat</th>
+                <th>Toplam</th>
+                <th>Zamanlama</th>
+                <th>24S Hacim</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr>
+                            <td>12:10</td>
+                            <td>WBTC/USDT</td>
+                            <td><span class='type-buy'>Alış</span></td>
+                            <td>1.75</td>
+                            <td>66,777</td>
+                            <td>116,875</td>
+                            <td>6 dakika</td>
+                            <td>2.82M</td>
+                          </tr><tr>
+                            <td>11:15</td>
+                            <td>WLFI/USDT</td>
+                            <td><span class='type-buy'>Alış</span></td>
+                            <td>4.5M</td>
+                            <td>0.0613</td>
+                            <td>279,825</td>
+                            <td>7 dakika</td>
+                            <td>6.69M</td>
+                          </tr><tr>
+                            <td>05:00</td>
+                            <td>BNSOL/USDT</td>
+                            <td><span class='type-buy'>Alış</span></td>
+                            <td>839.17</td>
+                            <td>82.50</td>
+                            <td>69,247</td>
+                            <td>5 dakika</td>
+                            <td>1.24M</td>
+                          </tr><tr>
+                            <td>16:35</td>
+                            <td>PLUME/USDT</td>
+                            <td><span class='type-buy'>Alış</span></td>
+                            <td>10.44M</td>
+                            <td>0.0118</td>
+                            <td>124,407</td>
+                            <td>6 dakika</td>
+                            <td>2.29M</td>
+                          </tr><tr>
+                            <td>16:30</td>
+                            <td>ROSE/USDT</td>
+                            <td><span class='type-buy'>Alış</span></td>
+                            <td>7.77M</td>
+                            <td>0.00715</td>
+                            <td>55,802</td>
+                            <td>7 dakika</td>
+                            <td>1.08M</td>
+                          </tr><tr>
+                            <td>15:10</td>
+                            <td>SKY/USDT</td>
+                            <td><span class='type-buy'>Alış</span></td>
+                            <td>1.85M</td>
+                            <td>0.0572</td>
+                            <td>105,556</td>
+                            <td>7 dakika</td>
+                            <td>1.64M</td>
+                          </tr><tr>
+                            <td>14:20</td>
+                            <td>PHA/USDT</td>
+                            <td><span class='type-sell'>Satış</span></td>
+                            <td>3.97M</td>
+                            <td>0.0365</td>
+                            <td>145,927</td>
+                            <td>7 dakika</td>
+                            <td>2.7M</td>
+                          </tr><tr>
+                            <td>14:00</td>
+                            <td>WBETH/USDT</td>
+                            <td><span class='type-buy'>Alış</span></td>
+                            <td>39.68</td>
+                            <td>1,915</td>
+                            <td>75,685</td>
+                            <td>5 dakika</td>
+                            <td>1.69M</td>
+                          </tr>        </tbody>
+    </table>
+
+    <script>
+        // Her 10 saniyede bir tabloyu yenile
+        setInterval(function() {
+            fetch(window.location.href)
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+                    const newTableBody = doc.getElementById('tableBody').innerHTML;
+                    document.getElementById('tableBody').innerHTML = newTableBody;
+                })
+                .catch(error => console.error('Tablo yenilenirken hata:', error));
+        }, 10000);
+    </script>
+</body>
+
+<!-- Mirrored from www.wolatil.com/balinatablosu.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Mirrored from www.wolatil.com/tarayici.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:41:24 GMT -->
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web App</title>
+    <script type="module" src="auth-check.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .tradingview-widget-container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tradingview-widget-container__widget {
+            width: 100%;
+            height: 100%;
+        }
+
+        #app {
+            display: none; /* Başlık üstte boşluk yaratmasın diye gizli */
+        }
+
+        /* Mobil cihazlar için ek ayar */
+        @media (max-width: 768px) {
+            .tradingview-widget-container {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        /* Desktop için tam ekran garantisi */
+        @media (min-width: 769px) {
+            .tradingview-widget-container {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+  <script type="module" src="auth-check-include.js"></script>
+
+    <!-- TradingView Widget BEGIN -->
+    <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <div class="tradingview-widget-copyright">
+            <a href="https://tr.tradingview.com/" rel="noopener nofollow" target="_blank"></a>
+        </div>
+        <script type="text/javascript" src="../s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
+        {
+            "width": "100%",
+            "height": "100%",
+            "defaultColumn": "performance",
+            "defaultScreen": "top_gainers",
+            "market": "crypto",
+            "showToolbar": true,
+            "colorTheme": "dark",
+            "locale": "tr"
+        }
+        </script>
+    </div>
+    <!-- TradingView Widget END -->
+</body>
+
+<!-- Mirrored from www.wolatil.com/tarayici.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:41:25 GMT -->
+</html>

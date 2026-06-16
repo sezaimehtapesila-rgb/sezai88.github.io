@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:20:34 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-adsense-account" content="ca-pub-7921201606168388">
+    <title>Wolatil.com Kripto Analiz ve Tahminleri</title>
+	<script>
+	if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+  if (!window.location.search.includes('homescreen=true')) {
+    window.location.href = "index43d7.html?homescreen=true";
+  }
+}
+
+</script>
+    <script>
+        async function fetchBitcoinPrice() {
+            try {
+                const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+                const data = await response.json();
+                let price = Math.floor(parseFloat(data.price));
+                const formattedPrice = new Intl.NumberFormat('de-DE').format(price);
+                document.title = `$${formattedPrice} | Wolatil.com Kripto Analiz ve Tahminleri`;
+            } catch (error) {
+                console.error("Bitcoin fiyatı alınırken hata oluştu:", error);
+                document.title = "Fiyat Alınamıyor | Wolatil.com";
+            }
+        }
+        setInterval(fetchBitcoinPrice, 5000);
+        window.onload = fetchBitcoinPrice;
+    </script>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="android/Icon-192.png">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(() => console.log('Service Worker Registered'));
+        }
+    </script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1a1a1d;
+            color: #fff;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #121212;
+            z-index: 1000;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        #logoImage {
+            cursor: pointer;
+            height: 30px;
+            margin-right: 20px;
+        }
+
+        .wolatilmenu-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            transition: box-shadow 0.3s ease;
+            z-index: 1000;
+        }
+
+        .wolatilmenu {
+            width: 150px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        .matrix-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .wolatilmenu span {
+            position: relative;
+            z-index: 2;
+            color: #00ff00;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .wolatilmenu:hover span {
+            transform: scale(1.3);
+            text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 60px #00ff00;
+        }
+
+        .wolatilmenu-items {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 250px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 10px 20px rgba(0, 255, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .wolatilmenu-container.show .wolatilmenu-items {
+            display: flex;
+        }
+
+        .wolatilmenu-item {
+            padding: 10px 15px;
+            color: #00ff00;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.5);
+            transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .wolatilmenu-item.has-submenu::after {
+            content: '▼';
+            float: right;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .wolatilmenu-item:hover {
+            background: #00ff00;
+            color: black;
+            transform: scale(1.05);
+        }
+
+        .submenu {
+            display: none;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid rgba(0, 255, 0, 0.5);
+        }
+
+        .submenu-item {
+            padding: 8px 20px;
+            color: #00ff00;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+            position: relative;
+        }
+
+        .submenu-item:hover {
+            background: #00ff00;
+            color: black;
+        }
+
+        .wolatilmenu-item.active + .submenu {
+            display: flex;
+        }
+
+        .submenu + .wolatilmenu-item {
+            border-top: 1px solid rgba(0, 255, 0, 0.5);
+        }
+
+        /* Tooltip Stilleri */
+        .tooltip {
+            position: absolute;
+            left: -10px;
+            transform: translateX(-100%);
+            top: 50%;
+            transform: translateY(-50%) translateX(-100%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #00ff00;
+            padding: 8px 12px;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1001;
+            text-align: left;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-left-color: #00ff00;
+        }
+
+        .wolatilmenu-item:hover .tooltip,
+        .submenu-item:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Karartma Efekti */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .wolatilmenu-item:hover ~ .overlay,
+        .submenu-item:hover ~ .overlay {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .wolatilmenu-item {
+                padding: 8px 10px;
+                font-size: 16px;
+                border-bottom: 1px solid rgba(0, 255, 0, 0.5);
+            }
+            .submenu-item {
+                padding: 6px 15px;
+                font-size: 16px;
+            }
+            .wolatilmenu-items {
+                width: 200px;
+            }
+            .submenu + .wolatilmenu-item {
+                border-top: 1px solid rgba(0, 255, 0, 0.5);
+            }
+            .submenu {
+                border-top: 1px solid rgba(0, 255, 0, 0.5);
+            }
+            .tooltip {
+                left: -5px;
+                font-size: 12px;
+                max-width: 132px;
+                white-space: normal;
+                word-break: break-word;
+                text-align: left;
+                display: inline-block;
+                width: fit-content;
+            }
+        }
+
+        .content {
+            margin-top: 70px;
+            height: calc(100% - 70px);
+            overflow: hidden;
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D26K74T86W"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-D26K74T86W');
+    </script>
+    <div class="header">
+        <div style="display: flex; align-items: left;">
+            <!-- Telegram İkonu -->
+            <a href="https://t.me/wolatil" target="_blank" class="telegram-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" 
+                     alt="Telegram" style="height: 25px; width: 25px;">
+            </a>
+            <img src="wolatillogo.png" id="logoImage" alt="Wolatil Logo" style="height: 25px; cursor: pointer;">
+        </div>
+
+        <div class="wolatilmenu-container" id="wolatilmenuContainer">
+            <div class="wolatilmenu" id="menuButton">
+                <canvas class="matrix-overlay"></canvas>
+                <span>Menu</span>
+            </div>
+            <div class="wolatilmenu-items" id="menuItems">
+                <div class="wolatilmenu-item" data-file="dashboard.html">
+                    Ana Sayfa
+                    <span class="tooltip">Ana sayfaya geri dön</span>
+                </div>
+				<div class="wolatilmenu-item" data-file="borsa.html">
+                    Borsa Yapay Zeka
+                    <span class="tooltip">Borsa Yapay Zeka Analizi</span>
+                </div>
+                <div class="wolatilmenu-item has-submenu">
+                    Koin Analiz
+                    <span class="tooltip">Kripto Analiz araçları ve veriler</span>
+                </div>
+                <div class="submenu">
+                    <div class="submenu-item" data-file="yapayzekaanaliz.html">
+                        Yapay Zeka Analiz
+                        <span class="tooltip">Yapay zeka anlık istediğiniz koini analiz eder</span>
+                    </div>
+                    <div class="submenu-item" data-file="koinpaneli.html">
+                        Koin Paneli
+                        <span class="tooltip">Bir koin ile ilgili tüm analiz ve veriler tek panelde</span>
+                    </div>
+					<div class="submenu-item" data-file="grafiktalep.html">
+                        Wolatil Grafik
+                        <span class="tooltip">Wolatil.com Gözünden Grafik Ekranı</span>
+                    </div>
+                    <div class="submenu-item" data-file="destekdirenc.html">
+                        Destek Direnç Seviyeleri
+                        <span class="tooltip">Teknik destek/direnç noktaları</span>
+                    </div>
+                    <div class="submenu-item" data-file="https://wolatil.net/likidasyonlarimiz.php">
+                        Likidasyon Toplamları
+                        <span class="tooltip">Piyasada oluşan likidasyon toplamları</span>
+                    </div>
+                    <div class="submenu-item" data-file="likidite.html">
+                        Likidasyon Seviyeleri
+                        <span class="tooltip">En çok satış olabilecek likidasyon seviyeleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="https://www.coinglass.com/tr/pro/futures/LiquidationHeatMap">
+                        Likidasyon Haritası
+                        <span class="tooltip">En çok satış olabilecek likidasyon haritası</span>
+                    </div>
+                    <div class="submenu-item" data-file="tumanalizler.html">
+                        Analiz Edilenler
+                        <span class="tooltip">Daha önce analiz edilen tüm koinler tek ekranda</span>
+                    </div>
+                    <div class="submenu-item" data-file="formasyonum.html">
+                        Olası Formasyonlar
+                        <span class="tooltip">Yapay zekanın tesbit ettiği olası formasyonlar</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominansgrafik.html">
+                        Dominans Seviyeleri
+                        <span class="tooltip">Piyasa dominans seviyeleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="funding1.html">
+                        Fonlama Radarı
+                        <span class="tooltip">Fonlama oranlarındaki değişiklikleri takip edip açıklar</span>
+                    </div>
+                </div>
+                <div class="wolatilmenu-item has-submenu">
+                    Dominans Analiz
+                    <span class="tooltip">Önemli Dominans Seviyeleri</span>
+                </div>
+                <div class="submenu">
+                    <div class="submenu-item" data-file="dominanslarim7e38.html?koin=usdtd&amp;saat=1h">
+                        USDT Dominans
+                        <span class="tooltip">USDT Dominans Grafik ve Seviyeleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanshesapla.html">
+                        Dominansa Göre BTC
+                        <span class="tooltip">USDT Dominans Değerine Göre BTC nin fiyatını tahmin eder</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarim73e7.html?koin=btcd&amp;saat=1h">
+                        BTC Dominans
+                        <span class="tooltip">BTC Dominans Grafik ve Seviyeleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarim1518.html?koin=dxy&amp;saat=1h">
+                        DXY Seviyeleri
+                        <span class="tooltip">USA Dolar Endeksi Seviyeleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarimec69.html?koin=ethd&amp;saat=1h">
+                        ETH Dominans
+                        <span class="tooltip">ETH Dominans Grafik ve Seviyeleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarim30cd.html?koin=xrpd&amp;saat=1h">
+                        XRP Dominans
+                        <span class="tooltip">XRP Dominans Grafik ve Seviyeleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarim576e.html?koin=sold&amp;saat=1h">
+                        SOL Dominans
+                        <span class="tooltip">SOL Dominans Grafik ve Seviyeleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarimdb1b.html?koin=total&amp;saat=1h">
+                        TOTAL Market Seviyeleri
+                        <span class="tooltip">Btc Eth altkoinler ve stablecoinler dahil tüm kripto paraları kapsar.</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarimca8e.html?koin=total2&amp;saat=1h">
+                        TOTAL 2 Market Seviyeleri
+                        <span class="tooltip">Bitcoin hariç tüm kripto paraların toplam piyasa değerini gösterir.</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarim80e4.html?koin=total3&amp;saat=1h">
+                        TOTAL 3 Market Seviyeleri
+                        <span class="tooltip">Btc ve Eth hariç tüm kripto paraların toplam piyasa değerini gösterir.</span>
+                    </div>
+                    <div class="submenu-item" data-file="dominanslarim82dd.html?koin=othersd&amp;saat=1h">
+                        OTHERS Dominans Seviyeleri
+                        <span class="tooltip">Btc Eth ve büyük altkoinler hariç tüm küçük ve orta ölçekli altcoinlerin toplam piyasa değerini gösterir.</span>
+                    </div>
+                </div>
+                <div class="wolatilmenu-item has-submenu">
+                    Balina Cüzdanları
+                    <span class="tooltip">Büyük yatırımcı cüzdan takip</span>
+                </div>
+                <div class="submenu">
+                    <div class="submenu-item" data-file="balinashow.html">
+                        Balina Cüzdanları
+                        <span class="tooltip">Son 1 Saatte Balinaların Borsalara Gönderimleri</span>
+                    </div>
+					<div class="submenu-item" data-file="balinaozetlendi.html">
+                        Balina Son 24 Saat
+                        <span class="tooltip">Son 24 Saatte Balinaların Transferleri</span>
+                    </div>
+                    <div class="submenu-item" data-file="balinatablosu.html">
+                        Altkoin Balinası
+                        <span class="tooltip">Balinaların aldığı alt koinler</span>
+                    </div>
+                    <div class="submenu-item" data-file="sinyal1.html">
+                        Balina son 1 dk
+                        <span class="tooltip">Son 1 dakika içinde hacmi yüksek oranda yükseliş veya düşüş yapan koinler</span>
+                    </div>
+                    <div class="submenu-item" data-file="pump1.html">
+                        Balina Yakalayıcı
+                        <span class="tooltip">Son 1 dakika içinde fiyatı yüksek oranda yükseliş veya düşüş yapan koinler</span>
+                    </div>
+                    <div class="submenu-item" data-file="funding1.html">
+                        Balina Fonlama Radarı
+                        <span class="tooltip">Fonlama oranlarındaki değişiklikleri takip edip açıklar</span>
+                    </div>
+                </div>
+                <div class="wolatilmenu-item has-submenu">
+                    Koin Takip
+                    <span class="tooltip">Koin ve piyasa takibi</span>
+                </div>
+                <div class="submenu">
+				   <div class="submenu-item" data-file="https://wolatil.net/borsadane.php">
+                        Anlık Uyarılar
+                        <span class="tooltip">Tüm borsaları tarayıp uyarı oluşturur.</span>
+                    </div>
+                    <div class="submenu-item" data-file="https://wolatil.net/openinterest.php">
+                        Açık Pozisyon Radarı
+                        <span class="tooltip">Tüm borsalardaki open interestlere göre analiz yapar.</span>
+                    </div>
+                    <div class="submenu-item" data-file="siralama.html">
+                        Koin Radarı
+                        <span class="tooltip">Tüm koinleri anlık yükseliş oranına göre takip edin.</span>
+                    </div>
+                    <div class="submenu-item" data-file="koinwatch.html">
+                        Koin Alarmı
+                        <span class="tooltip">İstediğin koinleri ekle ve yükselişlerine göre tek ekranda izle</span>
+                    </div>
+                    <div class="submenu-item" data-file="koinpaneli.html">
+                        Koin Paneli
+                        <span class="tooltip">İstediğin koinin tüm verilerini tek ekranda gör</span>
+                    </div>
+                    <div class="submenu-item" data-file="sinyal1.html">
+                        1 dk Volatil Koinler
+                        <span class="tooltip">Son 1 dakika içinde yüksek oranda hacim yükselişi veya düşüşü yapan koinler</span>
+                    </div>
+                    <div class="submenu-item" data-file="pump1.html">
+                        Ani Uçan Koinler
+                        <span class="tooltip">Son 1 dakika içinde yüksek oranda fiyat yükselişi veya düşüşü yapan koinler</span>
+                    </div>
+                    <div class="submenu-item" data-file="dusencikan1saat.html">
+                        Son 1 Saat Zirve ve Dip
+                        <span class="tooltip">Son 1 saat içinde en çok düşen ve yükselen koinler</span>
+                    </div>
+                    <div class="submenu-item" data-file="https://cryptobubbles-sigma.vercel.app/">
+                        Kripto Balonları
+                        <span class="tooltip">Koin artış düşüş oranlarının balon şeklinde gösterimi</span>
+                    </div>
+                </div>
+                <div class="wolatilmenu-item has-submenu">
+                    Haber
+                    <span class="tooltip">Güncel haber ve etkinlikler</span>
+                </div>
+                <div class="submenu">
+                    <div class="submenu-item" data-file="etkinlik.html">
+                        Önemli Etkinlikler
+                        <span class="tooltip">Kripto etkinlik takvimi</span>
+                    </div>
+                    <div class="submenu-item" data-file="etkinlik.html">
+                        Ekonomik Takvim
+                        <span class="tooltip">Ekonomik Takvim</span>
+                    </div>
+                    <div class="submenu-item" data-file="yapayhaber.html">
+                        Haberin Analizi
+                        <span class="tooltip">Haberlerin anlık yapay zeka analizi ve hangi koine ne kadar etki edebileceği</span>
+                    </div>
+                </div>
+                <div class="wolatilmenu-item has-submenu">
+                    Araçlar
+                    <span class="tooltip">Kripto analiz araçları</span>
+                </div>
+                <div class="submenu">
+                    <div class="submenu-item" data-file="https://www.geckoterminal.com/tr">
+                        Dex Tarayıcı
+                        <span class="tooltip">Ana borsalarda olmayan DEXler de olan Koinlerin Takibi</span>
+                    </div>
+                    <div class="submenu-item" data-file="tarayici.html">
+                        Teknik Radar
+                        <span class="tooltip">Tüm koinleri filitreler ile teknik araştırma ekranı</span>
+                    </div>
+                    <div class="submenu-item" data-file="koinwatch.html">
+                        Koin Alarmı
+                        <span class="tooltip">İlgilendiğiniz koinleri girip alarm oluşturarak tek ekranda takip edin</span>
+                    </div>
+                    <div class="submenu-item" data-file="watchlist.html">
+                        Portföy Yöneticisi
+                        <span class="tooltip">Tüm portföyünüzü tek ekranda takip edin. Yada alıyor gibi simülasyon yapın.</span>
+                    </div>
+                    
+                </div>
+                <div class="wolatilmenu-item has-submenu">
+                    English
+                    <span class="tooltip">AI Analysis Tools</span>
+                </div>
+                <div class="submenu">
+                    <div class="submenu-item" data-file="engai.html">
+                        AI Analysis Tool
+                        <span class="tooltip">You can make AI Analysis for any coin</span>
+                    </div>
+                    <div class="submenu-item" data-file="coindashboard.html">
+                        Coin Dashboard
+                        <span class="tooltip">You can see all analysed coins at one screen</span>
+                    </div>
+                    <div class="submenu-item" data-file="destekdirencen.html">
+                        Support & Resistance Zones
+                        <span class="tooltip">See Support and Resistance Zones With Graphic</span>
+                    </div>
+                    <div class="submenu-item" data-file="likiditeen.html">
+                        Liquidation Levels
+                        <span class="tooltip">Liquidation Levels of Anycoin with Graphic.</span>
+                    </div>
+                    <div class="submenu-item" data-file="tarayicien.html">
+                        Technical Radar
+                        <span class="tooltip">Filter by any indicator all coins</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content" style="display: flex; flex-direction: column; align-items: center;">
+        <iframe id="mainIframe" 
+            style="width: 100%; height: 90vh; border: none; display: block;"></iframe>
+
+        <div class="ads-wrapper">
+            <div class="ads-container">
+                <script async src="../pagead2.googlesyndication.com/pagead/js/fe17d.txt?client=ca-pub-7921201606168388"
+                    crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                    style="display:block"
+                    data-ad-format="fluid"
+                    data-ad-layout-key="-fb+5w+4e-db+86"
+                    data-ad-client="ca-pub-7921201606168388"
+                    data-ad-slot="3608224478"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .ads-wrapper {
+            width: 100%;
+            background-color: #000 !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+        }
+        .ads-container {
+            background-color: #000 !important;
+            width: 100%;
+            max-width: 728px;
+            text-align: center;
+            padding: 10px 0;
+        }
+        @media (max-width: 768px) {
+            #mainIframe {
+                height: 80vh !important;
+            }
+            .ads-container ins {
+                width: 100%;
+                height: 30px !important;
+            }
+        }
+        @media (min-width: 769px) {
+            .ads-container ins {
+                width: 728px;
+                height: 30px !important;
+            }
+        }
+    </style>
+
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        window.onbeforeunload = function(event) {
+            return "Wolatil.com'dan çıkmak mı istiyorsunuz? Lütfen onaylayın!";
+        };
+
+        const wolatilmenuContainer = document.getElementById('wolatilmenuContainer');
+        const menuButton = document.getElementById('menuButton');
+        const menuItems = document.getElementById('menuItems');
+        const iframe = document.getElementById('mainIframe');
+        const overlay = document.getElementById('overlay');
+
+        // Menü ve iframe’i güncelleyen fonksiyon
+        function updateMenuAndIframe() {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const existingLogoutButton = document.getElementById('logoutButton');
+            const returnUrl = localStorage.getItem("returnUrl");
+
+            console.log("isLoggedIn:", isLoggedIn, "returnUrl:", returnUrl); // Debug için
+
+            // İlk yüklemede veya iframe boşsa iframe’i ayarla
+            if (!iframe.src || iframe.src === window.location.href) {
+                iframe.src = returnUrl && returnUrl.trim() !== "" ? returnUrl : "dashboard.html";
+                if (returnUrl) localStorage.removeItem("returnUrl"); // returnUrl’ye gidildiğinde sıfırla
+            }
+
+            // "Çıkış Yap" butonunu ekle/kaldır
+            if (isLoggedIn && !existingLogoutButton) {
+                const logoutItem = document.createElement('div');
+                logoutItem.className = 'wolatilmenu-item';
+                logoutItem.id = 'logoutButton';
+                logoutItem.innerHTML = `
+                    Çıkış Yap
+                    <span class="tooltip">Oturumu kapat</span>
+                `;
+                menuItems.appendChild(logoutItem);
+
+                logoutItem.addEventListener('click', () => {
+                    iframe.src = "logoutnow.html";
+                    wolatilmenuContainer.classList.remove('show');
+                    overlay.style.visibility = 'hidden';
+                    overlay.style.opacity = '0';
+                    localStorage.removeItem("isLoggedIn");
+                    localStorage.removeItem("returnUrl");
+                    setTimeout(() => {
+                        iframe.src = "login.html";
+                        updateMenuAndIframe(); // Çıkış yaptıktan sonra menüyü güncelle
+                    }, 500);
+                });
+            } else if (!isLoggedIn && existingLogoutButton) {
+                existingLogoutButton.remove();
+            }
+        }
+
+        // Tüm alt menüleri kapatan fonksiyon
+        function closeAllSubmenus() {
+            document.querySelectorAll('.wolatilmenu-item.has-submenu').forEach(item => {
+                item.classList.remove('active');
+            });
+        }
+
+        // Sayfa yüklendiğinde menü ve iframe’i güncelle
+        document.addEventListener('DOMContentLoaded', () => {
+            updateMenuAndIframe();
+
+            // Login durumu değiştiğinde "Çıkış Yap" butonunu kontrol et
+            window.addEventListener('storage', (event) => {
+                if (event.key === "isLoggedIn") {
+                    updateMenuAndIframe();
+                }
+            });
+        });
+
+        // Menüden seçim yapıldığında iframe’i güncelle ve alt menüleri kapat
+        document.querySelectorAll('.wolatilmenu-item:not(.has-submenu)').forEach(item => {
+            item.addEventListener('click', () => {
+                const file = item.getAttribute('data-file');
+                if (file) {
+                    iframe.src = file;
+                    wolatilmenuContainer.classList.remove('show');
+                    overlay.style.visibility = 'hidden';
+                    overlay.style.opacity = '0';
+                    closeAllSubmenus();
+                }
+            });
+        });
+
+        document.querySelectorAll('.submenu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const file = item.getAttribute('data-file');
+                if (file) {
+                    iframe.src = file;
+                    wolatilmenuContainer.classList.remove('show');
+                    overlay.style.visibility = 'hidden';
+                    overlay.style.opacity = '0';
+                    closeAllSubmenus();
+                }
+            });
+        });
+
+        // Logo tıklandığında dashboard’a dön ve alt menüleri kapat
+        document.getElementById('logoImage').addEventListener('click', () => {
+            iframe.src = "dashboard.html";
+            wolatilmenuContainer.classList.remove('show');
+            overlay.style.visibility = 'hidden';
+            overlay.style.opacity = '0';
+            closeAllSubmenus();
+        });
+
+        // Menü açma/kapama
+        menuButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            wolatilmenuContainer.classList.toggle('show');
+            if (wolatilmenuContainer.classList.contains('show')) {
+                overlay.style.visibility = 'visible';
+                overlay.style.opacity = '1';
+            } else {
+                overlay.style.visibility = 'hidden';
+                overlay.style.opacity = '0';
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!wolatilmenuContainer.contains(event.target) && wolatilmenuContainer.classList.contains('show')) {
+                wolatilmenuContainer.classList.remove('show');
+                overlay.style.visibility = 'hidden';
+                overlay.style.opacity = '0';
+            }
+        });
+
+        document.querySelectorAll('.wolatilmenu-item.has-submenu').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                item.classList.toggle('active');
+                document.querySelectorAll('.wolatilmenu-item.has-submenu').forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Matrix efekti
+        const canvas = document.querySelector('.matrix-overlay');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const matrixChars = '01';
+        const fontSize = 10;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff00';
+            ctx.font = `${fontSize}px monospace`;
+
+            drops.forEach((y, index) => {
+                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                const x = index * fontSize;
+                ctx.fillText(text, x, y * fontSize);
+
+                if (y * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[index] = 0;
+                }
+                drops[index]++;
+            });
+
+            requestAnimationFrame(drawMatrix);
+        }
+
+        drawMatrix();
+
+        document.querySelectorAll('.wolatilmenu-item, .submenu-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                overlay.style.visibility = 'visible';
+                overlay.style.opacity = '1';
+            });
+            item.addEventListener('mouseleave', () => {
+                overlay.style.visibility = 'hidden';
+                overlay.style.opacity = '0';
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const koinParam = urlParams.get('koin');
+            const analizetParam = urlParams.has('analizet');
+
+            if (koinParam) {
+                document.getElementById('mainIframe').src = `https://wolatil.com/grid1.php?koin=${koinParam}`;
+            } else if (analizetParam) {
+                document.getElementById('mainIframe').src = `analiztalep.php`;
+            }
+        });
+    </script>
+</body>
+
+<!-- Mirrored from www.wolatil.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:21:59 GMT -->
+</html>

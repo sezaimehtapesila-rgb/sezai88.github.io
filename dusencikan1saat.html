@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from www.wolatil.com/dusencikan1saat.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gate.io Coin Data</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap; /* Mobil cihazlarda alt alta gelmesi için */
+        }
+        .table-container {
+            flex: 1 1 45%; /* Her tablo, minimum %45 genişlikte */
+            min-width: 200px; /* Minimum genişlik */
+            margin: 10px 0; /* Yatayda boşluk yok, dikeyde boşluk var */
+        }
+        h2 {
+            text-align: center;
+            color: #FFD700;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #111;
+            overflow-x: auto; /* Yatay kaydırma */
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background-color: #222;
+            text-align: left;
+        }
+        td {
+            text-align: left;
+        }
+        td:nth-child(2) {
+            text-align: right;
+        }
+        tr:hover {
+            background-color: #333;
+        }
+        a {
+            color: #1E90FF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobil cihazlar için özel stiller */
+        @media (max-width: 768px) {
+            .table-container {
+                flex: 1 1 48%; /* Mobil cihazlarda daha dar */
+            }
+        }
+
+        /* Çok dar ekranlar için */
+        @media (max-width: 480px) {
+            .table-container {
+                flex-basis: 100%; /* Çok dar ekranlarda tek sütuna geç */
+            }
+        }
+    </style>
+</head>
+<body><script type="module" src="auth-check-include.js"></script>
+    <div class="container">
+        <div class="table-container">
+            <h2>Son 1 Saatte En Çok Çıkan Koinler</h2>
+            <table id="rising-coins">
+                <thead>
+                    <tr>
+                        <th>Coin Adı</th>
+                        <th>% Artış</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+        <div class="table-container">
+            <h2>Son 1 Saatte En Çok Düşen Koinler</h2>
+            <table id="falling-coins">
+                <thead>
+                    <tr>
+                        <th>Coin Adı</th>
+                        <th>% Düşüş</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('gateio_data.json');
+                const data = await response.json();
+
+                const risingCoins = [];
+                const fallingCoins = [];
+
+                data.forEach(coin => {
+                    const percentChange = parseFloat(coin.percentChange);
+                    const coinData = {
+                        name: coin.currency_pair.replace('_USDT', ''),
+                        change: percentChange,
+                        link: `https://www.tradingview.com/chart/BKBuIPdh/?symbol=${coin.currency_pair.replace('_', '')}`
+                    };
+
+                    if (percentChange > 0) {
+                        risingCoins.push(coinData);
+                    } else {
+                        fallingCoins.push(coinData);
+                    }
+                });
+
+                risingCoins.sort((a, b) => b.change - a.change);
+                fallingCoins.sort((a, b) => a.change - b.change);
+
+                populateTable('rising-coins', risingCoins);
+                populateTable('falling-coins', fallingCoins);
+            } catch (error) {
+                console.error('Veriler alınırken hata oluştu:', error);
+            }
+        }
+
+        function formatChange(value) {
+            return parseFloat(value).toFixed(2) + '%';
+        }
+
+        function populateTable(tableId, data) {
+            const tableBody = document.getElementById(tableId).querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            data.forEach(coin => {
+                const row = document.createElement('tr');
+
+                const nameCell = document.createElement('td');
+                const link = document.createElement('a');
+                link.href = coin.link;
+                link.target = 'wolatil';
+                link.textContent = coin.name;
+                nameCell.appendChild(link);
+
+                const changeCell = document.createElement('td');
+                changeCell.textContent = formatChange(coin.change);
+
+                row.appendChild(nameCell);
+                row.appendChild(changeCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        fetchData();
+        setInterval(fetchData, 300000); // Update every 5 minutes
+    </script>
+</body>
+
+<!-- Mirrored from www.wolatil.com/dusencikan1saat.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+</html>

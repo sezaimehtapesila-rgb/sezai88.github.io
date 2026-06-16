@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/koinwatch.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koin Takip</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1d;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+            background-color: #333;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,.7);
+        }
+        thead {
+            display: table-header-group;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #555;
+        }
+        td, th {
+            border: 1px solid #444;
+            padding: 10px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        th {
+            background-color: #555;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        tbody {
+            display: table-row-group;
+        }
+        tr {
+            height: 40px;
+            transition: background-color .2s ease, transform .5s ease-in-out;
+        }
+        tr:hover {
+            background-color: #666;
+            cursor: pointer;
+        }
+        tr td a {
+            color: gold;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        tr td a:hover {
+            color: #fc0;
+        }
+        .delete-btn {
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin: 0 2px;
+        }
+        .delete-btn:hover {
+            background: darkred;
+        }
+        .search-container {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        .suggestions {
+            background: #111;
+            border: 1px solid #555;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 300px;
+            position: absolute;
+            top: 40px;
+            z-index: 10;
+        }
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            color: white;
+        }
+        .suggestion-item:hover {
+            background: #333;
+        }
+     .modal, .popup {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%; /* Popup'un genişliğini mobilde sınırlandır */
+    max-width: 600px; /* Büyük ekranlarda maksimum genişlik */
+    height: auto; /* Yükseklik içeriğe göre ayarlanacak */
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Popup içeriği için ayarlar */
+.modal-content, .popup-content {
+    background-color: #444;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    overflow-y: auto; /* Taşma olursa kaydırma çubuğu eklensin */
+    max-height: 80vh; /* Mobilde çok uzun olmasını engeller */
+}
+
+/* Kapatma tuşu */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    z-index: 1001; /* Popup'un içinde her zaman üstte */
+}
+
+@media screen and (max-width: 768px) {
+    .modal, .popup {
+        width: 90%; /* Genişliği daha dar yap */
+        height: auto; /* İçeriğe göre ayarlanacak */
+        max-height: 90vh; /* Çok uzun olmasını engeller */
+        overflow-y: auto; /* İçeriği kaydırma imkanı verir */
+    }
+
+    .modal-content, .popup-content {
+        max-height: 80vh;
+        padding: 15px;
+    }
+
+    .close {
+        font-size: 22px;
+        top: 5px;
+        right: 10px;
+    }
+}
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .alarm-section {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .alarm-section label {
+            margin-right: 10px;
+        }
+        .alarm-section input[type="number"] {
+            width: 100px;
+            margin: 0 5px;
+        }
+        .percentage-alarm {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .percentage-alarm > div {
+            margin: 5px 0;
+            width: 48%;
+        }
+        .percentage-alarm input[type="number"] {
+            width: 50px;
+            margin: 0 5px;
+        }
+        .alarm-duration {
+            margin-top: 10px;
+        }
+        .alarm-duration input {
+            width: 40px;
+            margin: 0 5px;
+        }
+        #triggered-alarms {
+            margin-top: 20px;
+            background: #444;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        #triggered-alarms p {
+            margin: 5px 0;
+            color: #fff;
+        }
+		
+		@media screen and (max-width: 768px) {
+    table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* Tablonun hücrelerini sıkışmasını önle */
+    table td, table th {
+        padding: 10px;
+        text-align: center;
+        font-size: 14px; /* Mobil için yazıyı küçült */
+    }
+
+    /* Mobilde alarm ve silme butonlarını görünür yap */
+    .alarm-cell, .delete-btn {
+        display: inline-block !important;
+        visibility: visible !important;
+        width: auto !important;
+        min-width: 40px;
+    }
+
+    /* Silme butonlarının görünmesini sağlar */
+    .delete-btn {
+        display: inline-block;
+        background: red;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+
+    /* Alarm butonlarının görünmesini sağlar */
+    .alarm-cell {
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        color: gold;
+    }
+}
+
+
+/* Pozitif değişim yüzdesi (Yükseliş) */
+.percent-change.positive {
+    background-color: rgba(0, 255, 0, 0.2); /* Yeşil arka plan */
+    color: #00ff00; /* Açık yeşil yazı */
+    font-weight: bold;
+    font-size: 1.1em; /* Normalden büyük font */
+    padding: 5px;
+    border-radius: 5px; /* Hafif köşeleri yuvarlat */
+}
+
+/* Negatif değişim yüzdesi (Düşüş) */
+.percent-change.negative {
+    background-color: rgba(255, 0, 0, 0.2); /* Kırmızı arka plan */
+    color: #ff4d4d; /* Açık kırmızı yazı */
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+@media screen and (max-width: 768px) {
+    /* Silme butonunu küçült */
+    .delete-btn {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        padding: 0;
+        line-height: 20px;
+        border-radius: 3px;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Alarm butonunu küçült */
+    .alarm-cell span {
+        font-size: 14px;
+        padding: 0;
+        display: inline-flex;
+        width: 20px;
+        height: 20px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Sil ve Alarm sütunlarını daha dar yap */
+    table td:nth-child(1), table td:nth-child(2) {
+        width: 25px;
+        min-width: 25px;
+        padding: 2px;
+    }
+}
+
+
+    </style>
+</head>
+<body><script type="module" src="auth-check-include.js"></script>
+
+    <div class="search-container">
+        <input type="text" id="search" oninput="searchCoins()" placeholder="Koin adı girin...">
+        <div id="suggestions" class="suggestions"></div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Sil</th>
+                <th>Alarm</th>
+                <th>Koin</th>
+                <th>Son Fiyat</th>
+                <th>Değişim %</th>
+                <th>Volume%</th>
+                <th>En Yüksek</th>
+                <th>En Düşük</th>
+            </tr>
+        </thead>
+        <tbody id="crypto-table"></tbody>
+    </table>
+
+    <!-- Updated Alarm Modal -->
+    <div id="alarmModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Alarm Ayarla</h2>
+            <input type="hidden" id="alarmCoin">
+            <div class="alarm-section">
+                <label for="alarmRise">
+                    Yükseliş:
+                    <input type="number" id="alarmRisePrice" step="0.00000001">
+                    <button onclick="adjustPrice('rise', -0.00000001)">-</button>
+                    <button onclick="adjustPrice('rise', 0.00000001)">+</button>
+                    <input type="checkbox" id="enableRiseAlarm">
+                </label>
+            </div>
+            <div class="alarm-section">
+                <label for="alarmFall">
+                    Düşüş:
+                    <input type="number" id="alarmFallPrice" step="0.00000001">
+                    <button onclick="adjustPrice('fall', -0.00000001)">-</button>
+                    <button onclick="adjustPrice('fall', 0.00000001)">+</button>
+                    <input type="checkbox" id="enableFallAlarm">
+                </label>
+            </div>
+            <div class="alarm-duration">
+                Alarm Süresi (dakika): 
+                <input type="number" id="alarmDuration" min="1" max="5" value="3">
+                <button onclick="adjustDuration(-1)">-</button>
+                <button onclick="adjustDuration(1)">+</button>
+            </div>
+            <button onclick="setAlarm()">Alarmı Ayarla</button>
+        </div>
+    </div>
+
+    <!-- Popup for triggered alarms -->
+    <div id="alarmPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">×</span>
+            <h2 id="alarmTitle"></h2>
+            <p id="alarmDetails"></p>
+        </div>
+    </div>
+
+    <div id="triggered-alarms">
+        <h3>Tetiklenen Alarmlar</h3>
+    </div>
+
+    <script>
+        const tableBody = document.querySelector("#crypto-table");
+        let previousOrder = [];
+        let selectedCoins = JSON.parse(localStorage.getItem("selectedCoins")) || [];
+        let coins = [];
+        let alarms = JSON.parse(localStorage.getItem("alarms")) || {};
+        let currentAlarms = {};
+        let alarmTimers = {};
+        let lastPrices = JSON.parse(localStorage.getItem("lastPrices")) || {};
+        let percentageAlarms = JSON.parse(localStorage.getItem("percentageAlarms")) || {};
+        let triggeredAlarms = JSON.parse(localStorage.getItem("triggeredAlarms")) || [];
+		
+		
+        async function fetchData() {
+            try {
+                const response = await fetch("gateio_data.json");
+                const data = await response.json();
+                coins = data.map(entry => entry.currency_pair.toLowerCase());
+                coins.sort((a, b) => a.length - b.length);
+                return data;
+            } catch (error) {
+                console.error("JSON yüklenirken hata oluştu:", error);
+                return [];
+            }
+        }
+
+        function searchCoins() {
+            const input = document.getElementById("search").value.toLowerCase();
+            const suggestions = document.getElementById("suggestions");
+            suggestions.innerHTML = "";
+
+            if (input.length === 0) return;
+
+            const filtered = coins.filter(coin => coin.includes(input));
+            filtered.forEach(coin => {
+                const div = document.createElement("div");
+                div.innerText = coin.toUpperCase();
+                div.classList.add("suggestion-item");
+                div.onclick = () => addCoin(coin);
+                suggestions.appendChild(div);
+            });
+        }
+
+        function addCoin(coin) {
+            if (!selectedCoins.includes(coin)) {
+                selectedCoins.push(coin);
+                localStorage.setItem("selectedCoins", JSON.stringify(selectedCoins));
+                refreshData();
+            }
+            document.getElementById("search").value = "";
+            document.getElementById("suggestions").innerHTML = "";
+        }
+
+        function removeCoin(coin) {
+            selectedCoins = selectedCoins.filter(c => c !== coin);
+            delete alarms[coin];
+            delete currentAlarms[coin];
+            delete lastPrices[coin];
+            localStorage.setItem("selectedCoins", JSON.stringify(selectedCoins));
+            localStorage.setItem("alarms", JSON.stringify(alarms));
+            localStorage.setItem("lastPrices", JSON.stringify(lastPrices));
+            refreshData();
+        }
+
+function adjustPrice(type, adjustment) {
+    const input = document.getElementById(`alarm${type[0].toUpperCase() + type.slice(1)}Price`);
+    let currentValue = parseFloat(input.value) || 0;
+
+    // **1'den büyükse tam sayı artır/azalt, küçükse hassas değişim yap**
+    if (currentValue >= 1) {
+        adjustment = adjustment > 0 ? 1 : -1; // **Tam sayı artır veya azalt**
+    } else {
+        adjustment = adjustment > 0 ? 0.01 : -0.01; // **Küçük fiyatlarda kuruş bazında değişim**
+    }
+
+    let newValue = currentValue + adjustment;
+
+    // **8 basamaklı formatı koruyarak yeni değeri ayarla**
+    input.value = newValue.toFixed(8);
+}
+
+
+        function adjustDuration(adjustment) {
+            const input = document.getElementById('alarmDuration');
+            const currentValue = parseInt(input.value) || 3;
+            input.value = Math.max(1, Math.min(5, currentValue + adjustment));
+        }
+
+function openAlarmModal(coin) {
+    const modal = document.getElementById("alarmModal");
+    document.getElementById("alarmCoin").value = coin;
+    const currentPrice = lastPrices[coin] || 0;
+    document.getElementById("alarmRisePrice").value = currentPrice.toPrecision(8);
+    document.getElementById("alarmFallPrice").value = currentPrice.toPrecision(8);
+
+    // **Alarmlar gerçekten varsa checkbox'ları işaretle, yoksa kaldır**
+    if (alarms[coin]) {
+        document.getElementById("enableRiseAlarm").checked = !!alarms[coin].rise;
+        document.getElementById("enableFallAlarm").checked = !!alarms[coin].fall;
+
+        if (alarms[coin].rise) {
+            document.getElementById("alarmRisePrice").value = alarms[coin].rise.price.toPrecision(8);
+        }
+        if (alarms[coin].fall) {
+            document.getElementById("alarmFallPrice").value = alarms[coin].fall.price.toPrecision(8);
+        }
+    } else {
+        // **Alarm yoksa checkbox'ları temizle**
+        document.getElementById("enableRiseAlarm").checked = false;
+        document.getElementById("enableFallAlarm").checked = false;
+    }
+
+    modal.style.display = "block";
+}
+
+function setAlarm() {
+    const coin = document.getElementById("alarmCoin").value;
+    const risePrice = parseFloat(document.getElementById("alarmRisePrice").value);
+    const fallPrice = parseFloat(document.getElementById("alarmFallPrice").value);
+    const enableRise = document.getElementById("enableRiseAlarm").checked;
+    const enableFall = document.getElementById("enableFallAlarm").checked;
+    const duration = parseInt(document.getElementById("alarmDuration").value) * 60;
+
+    if (!enableRise && !enableFall) {
+        delete alarms[coin]; // Hiçbir alarm ayarlanmadıysa tamamen kaldır
+        localStorage.setItem("alarms", JSON.stringify(alarms));
+        document.getElementById("enableRiseAlarm").checked = false;
+        document.getElementById("enableFallAlarm").checked = false;
+    } else {
+        alarms[coin] = {
+            rise: enableRise ? { price: risePrice, duration: duration } : null,
+            fall: enableFall ? { price: fallPrice, duration: duration } : null
+        };
+        localStorage.setItem("alarms", JSON.stringify(alarms));
+    }
+
+    document.getElementById("alarmModal").style.display = "none";
+    refreshData();
+}
+
+// **Popup kapatıldığında hiçbir şey kaybolmasın**
+function closePopup() {
+    const popup = document.getElementById("alarmPopup");
+    popup.style.display = "none";
+}
+
+window.onload = async function () {
+    await fetchData();
+    refreshData();
+    setInterval(refreshData, 2000);
+
+    // LocalStorage'dan önceki tetiklenen alarmları al
+    triggeredAlarms = JSON.parse(localStorage.getItem("triggeredAlarms")) || [];
+
+    // Eski alarmları ekrana yazdır
+    logTriggeredAlarm(true); 
+};
+
+
+
+window.onload = function () {
+    const popup = document.getElementById("alarmPopup");
+    if (popup && popup.style.display === "block") {
+        popup.style.display = "none";
+    }
+};
+
+
+
+
+
+
+        async function refreshData() {
+            const newData = await fetchData();
+            const filteredData = newData.filter(entry => selectedCoins.includes(entry.currency_pair.toLowerCase()));
+            updateTable(filteredData);
+        }
+
+        function updateTable(newData) {
+            const rows = Array.from(tableBody.querySelectorAll("tr"));
+            const currentOrder = newData.map(entry => entry.currency_pair.toLowerCase());
+
+            newData.sort((a, b) => parseFloat(b.percentChange) - parseFloat(a.percentChange));
+
+            setTimeout(() => {
+                tableBody.innerHTML = "";
+                newData.forEach((info, index) => {
+                    const row = createRow(info.currency_pair.toLowerCase(), info);
+                    tableBody.appendChild(row);
+                    row.style.order = index;
+                    checkAlarm(row, info);
+                    updatePriceColor(row, info);
+                });
+
+                previousOrder = currentOrder;
+            }, 500);
+        }
+
+        function createRow(coin, info) {
+            const row = document.createElement("tr");
+            row.dataset.coin = coin;
+            
+			
+			let quoteVolume = parseFloat(info.quoteVolume);
+let baseVolume = parseFloat(info.baseVolume);
+
+// **Hacim sıfırsa NaN hatasını önle**
+let volumePercentage = baseVolume > 0 ? ((quoteVolume / baseVolume) * 100).toFixed(2) : "0.00";
+
+// **Mantıksız büyük/küçük rakamları düzelt**
+if (volumePercentage > 10000) {
+    volumePercentage = ">10000"; // **Çok büyükse sınır koy**
+} else if (volumePercentage < 0.01 && volumePercentage > 0) {
+    volumePercentage = "<0.01"; // **Çok küçükse sıfırdan farklı olduğunu göster**
+}
+
+			
+			
+            const formattedCoin = coin.replace('_usdt', '').toUpperCase();
+            const priceCell = `<td class="price-cell"><span>${info.last}</span></td>`;
+
+            row.innerHTML = `
+              <td style="width: 25px; text-align: center;">
+    <button class="delete-btn" onclick="removeCoin('${coin}')">✖</button>
+</td>
+<td class="alarm-cell" style="width: 25px; text-align: center;">
+    <span onclick="openAlarmModal('${coin}')">     ⏰</span>
+</td>
+                <td><a href="https://www.tradingview.com/chart/BKBuIPdh/?symbol=${coin.replace('_', '').toLowerCase()}" target="wolatil">${formattedCoin}</a></td>
+                ${priceCell}
+                <td style="color: ${info.percentChange < 0 ? 'red' : 'yellow'};">${parseFloat(info.percentChange).toFixed(2)}%</td>
+                <td>${volumePercentage}%</td>
+                <td>${info.high24hr}</td>
+<td>${info.low24hr}</td>
+
+            `;
+
+            return row;
+        }
+
+function checkAlarm(row, info) {
+    const coin = row.dataset.coin;
+    if (alarms[coin]) {
+        const currentPrice = parseFloat(info.last);
+        const alarm = alarms[coin];
+        let triggered = false;
+        let triggeredType = null;
+        let triggeredPrice = null;
+
+        if (alarm.rise && currentPrice >= alarm.rise.price) {
+            showAlarmPopup(coin, 'Yükseliş', currentPrice, alarm.rise.price);
+            highlightRow(row, 'green', alarm.rise.duration, 'white');
+            triggered = true;
+            triggeredType = "rise"; // Yükseliş alarmı tetiklendi
+            triggeredPrice = alarm.rise.price;
+            delete alarms[coin].rise; // Yükseliş alarmını sil
+        } 
+        
+        if (alarm.fall && currentPrice <= alarm.fall.price) {
+            showAlarmPopup(coin, 'Düşüş', currentPrice, alarm.fall.price);
+            highlightRow(row, 'red', alarm.fall.duration, 'white');
+            triggered = true;
+            triggeredType = "fall"; // Düşüş alarmı tetiklendi
+            triggeredPrice = alarm.fall.price;
+            delete alarms[coin].fall; // Düşüş alarmını sil
+        }
+
+        if (triggered) {
+            logTriggeredAlarm(coin, currentPrice, triggeredPrice, triggeredType); // **Log kesin olarak çalışıyor**
+
+            // **Eğer coin için ne yükseliş ne de düşüş alarmı kalmadıysa, tamamen kaldır**
+            if (!alarms[coin].rise && !alarms[coin].fall) {
+                delete alarms[coin];
+                delete currentAlarms[coin]; // Aktif alarmlardan da kaldır
+
+                // **Checkbox'ları tamamen sıfırla**
+                document.getElementById("enableRiseAlarm").checked = false;
+                document.getElementById("enableFallAlarm").checked = false;
+            }
+
+            localStorage.setItem("alarms", JSON.stringify(alarms)); // LocalStorage'a güncellenmiş alarmları kaydet
+        }
+    }
+}
+
+
+
+
+
+
+
+
+function showAlarmPopup(coin, status, currentPrice, setPrice) {
+    const popup = document.getElementById("alarmPopup");
+    const title = document.getElementById("alarmTitle");
+    const details = document.getElementById("alarmDetails");
+
+    title.textContent = `${coin.toUpperCase()} - ${status}`;
+    details.textContent = `Şu anki fiyat: ${currentPrice.toFixed(8)} - Alarm fiyatı: ${setPrice.toFixed(8)}`;
+
+    popup.style.display = "block";
+}
+
+
+
+
+
+
+
+
+
+
+
+function saveTriggeredAlarms() {
+    localStorage.setItem("triggeredAlarms", JSON.stringify(triggeredAlarms));
+}
+
+function logTriggeredAlarm(coin, currentPrice, alarmPrice, triggeredType) {
+    console.log(`🔔 Alarm loglanıyor: ${coin} - Tür: ${triggeredType}`);
+
+    const now = new Date();
+    const formattedCoin = coin.toUpperCase().replace('_', 'index.html'); // BTC/USDT formatı
+
+    // **Doğru alarm türünü belirle (Yükseliş mi Düşüş mü?)**
+    const correctStatus = triggeredType === "rise" ? "Yükseliş" : "Düşüş";
+
+    const entry = {
+        coin: formattedCoin,
+        currentPrice: currentPrice,
+        alarmPrice: alarmPrice,
+        status: correctStatus,
+        time: now.toLocaleString()
+    };
+
+    console.log(`📌 Kaydedilen alarm verisi:`, entry);
+
+    triggeredAlarms.unshift(entry);
+    localStorage.setItem("triggeredAlarms", JSON.stringify(triggeredAlarms.slice(0, 50)));
+
+    // **Tabloyu Güncelle**
+    const alarmList = document.getElementById("triggered-alarms");
+    alarmList.innerHTML = `
+        <h3>Tetiklenen Alarmlar</h3>
+        <table style="width: 100%; border-collapse: collapse; text-align: center; background-color: #222; color: white;">
+            <thead>
+                <tr style="background-color: #444;">
+                    <th style="padding: 8px; border: 1px solid #555;">Koin</th>
+                    <th style="padding: 8px; border: 1px solid #555;">Durum</th>
+                    <th style="padding: 8px; border: 1px solid #555;">Şu Anki Fiyat</th>
+                    <th style="padding: 8px; border: 1px solid #555;">Alarm Fiyatı</th>
+                    <th style="padding: 8px; border: 1px solid #555;">Zaman</th>
+                </tr>
+            </thead>
+            <tbody id="alarmTableBody"></tbody>
+        </table>
+    `;
+
+    // **Tabloya Yeni Alarmları Ekle**
+    const tableBody = document.getElementById("alarmTableBody");
+    tableBody.innerHTML = ""; // Önce tabloyu temizle
+
+    triggeredAlarms.forEach(a => {
+        const row = document.createElement("tr");
+
+        // **Alarm türüne göre arka plan rengini belirle**
+        row.style.backgroundColor = a.status === "Yükseliş" ? "green" : "red";
+        row.style.color = "white";
+
+        row.innerHTML = `
+            <td style="padding: 8px; border: 1px solid #555; font-weight: bold; color: yellow;">${a.coin}</td>
+            <td style="padding: 8px; border: 1px solid #555;">📈 ${a.status}</td>
+            <td style="padding: 8px; border: 1px solid #555;">${a.currentPrice.toPrecision(8)}</td>
+            <td style="padding: 8px; border: 1px solid #555;">${a.alarmPrice.toPrecision(8)}</td>
+            <td style="padding: 8px; border: 1px solid #555; font-size: 12px; opacity: 0.8;">${a.time}</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+
+    console.log("✅ Alarm tablosu başarıyla güncellendi.");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function highlightRow(row, color, durationInSeconds, textColor) {
+    if (!row) return;
+
+    // **Sadece ilgili satırın rengini değiştir, DOM yapısını bozma**
+    row.style.backgroundColor = color;
+    row.style.transition = "background-color 0.5s ease-in-out";
+
+    // **Metin rengini değiştir ama DOM yapısını değiştirme**
+    Array.from(row.children).forEach(cell => {
+        cell.style.color = textColor;
+    });
+
+    // **15 saniye beklemeden eski haline döndür (Güncelleme öncesi düzeltecek)**
+    setTimeout(() => {
+        row.style.backgroundColor = ""; // **Arka plan rengini eski haline getir**
+        Array.from(row.children).forEach(cell => {
+            cell.style.color = ""; // **Metin rengini sıfırla**
+        });
+
+        // **Diğer koinlerin asla kaybolmamasını sağla**
+        const tableBody = document.getElementById("crypto-table");
+        if (tableBody) {
+            tableBody.style.display = "table"; // **Tabloyu tam görünür tut**
+            tableBody.style.visibility = "visible"; // **Koinleri her zaman göster**
+        }
+    }, durationInSeconds * 1000 - 1); // **Güncellemeden hemen önce resetle**
+}
+
+
+
+
+
+        function updatePriceColor(row, info) {
+            const coin = row.dataset.coin;
+            const priceSpan = row.querySelector('.price-cell span');
+            const currentPrice = parseFloat(info.last);
+            const previousPrice = lastPrices[coin] || currentPrice;
+
+            if (currentPrice > previousPrice) {
+                priceSpan.style.color = 'yellow';
+            } else if (currentPrice < previousPrice) {
+                priceSpan.style.color = 'red';
+            } else {
+                priceSpan.style.color = 'white';
+            }
+            priceSpan.style.fontWeight = 'bold';
+
+            lastPrices[coin] = currentPrice;
+            localStorage.setItem("lastPrices", JSON.stringify(lastPrices));
+        }
+
+        // Modal functionality
+        const modal = document.getElementById("alarmModal");
+        const span = document.getElementsByClassName("close")[0];
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            } else if (event.target == document.getElementById("alarmPopup")) {
+                closePopup();
+            }
+        }
+
+        window.onload = async function () {
+            await fetchData();
+            refreshData();
+            setInterval(refreshData, 5000);
+
+            // Load existing alarms into currentAlarms for immediate checking
+            for (let coin in alarms) {
+                if (alarms[coin].rise || alarms[coin].fall) {
+                    currentAlarms[coin] = alarms[coin];
+                }
+            }
+
+            // Load and display triggered alarms
+            logTriggeredAlarm();
+        };
+    </script>
+
+</body>
+
+<!-- Mirrored from www.wolatil.com/koinwatch.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+</html>

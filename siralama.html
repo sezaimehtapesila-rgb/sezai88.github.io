@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+
+<!-- Mirrored from www.wolatil.com/siralama.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koin Takip</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #1a1a1d;
+        color: #fff;
+        margin: 0;
+        padding: 0; /* Body padding'i sıfırladım */
+    }
+    .container {
+        width: 100%;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .filter-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        position: sticky;
+        top: 0;
+        background-color: #1a1a1d;
+        z-index: 10;
+        padding: 5px 0; /* Üstteki boşluğu minimize etmek için padding kontrol altında */
+        margin: 0; /* Margin sıfırlandı */
+    }
+    select, input {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #444;
+        background-color: #333;
+        color: white;
+        width: 200px;
+        max-width: 100%;
+        box-sizing: border-box; /* Padding'in genişliği etkilemesini önler */
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 10px; /* Filtre ile tablo arasında kontrollü boşluk */
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: #333;
+        box-shadow: 0 4px 6px rgba(0,0,0,.7);
+    }
+    th {
+        background-color: #555;
+        font-weight: 700;
+        text-transform: uppercase;
+        border: 1px solid #444;
+        padding: 10px;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+    td {
+        border: 1px solid #444;
+        padding: 10px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+    }
+    tr {
+        transition: background-color .2s ease;
+    }
+    tr:hover {
+        background-color: #666;
+        cursor: pointer;
+    }
+    tr td a {
+        color: gold;
+        text-decoration: none;
+        font-weight: 700;
+    }
+    tr td a:hover {
+        color: #fc0;
+    }
+    th, td {
+        min-width: 80px;
+        max-width: 150px;
+    }
+    @media (max-width: 768px) {
+        .filter-section {
+            flex-direction: column;
+            align-items: center;
+            padding: 5px; /* Daha sıkı bir padding */
+        }
+        select, input {
+            width: 100%;
+        }
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        th, td {
+            padding: 8px;
+            min-width: 60px;
+            font-size: 12px;
+        }
+    }
+    @media (max-width: 480px) {
+        th, td {
+            padding: 5px;
+            min-width: 50px;
+            font-size: 10px;
+        }
+    }
+</style>
+</head>
+<body><script type="module" src="auth-check-include.js"></script>
+<div class="container">
+    <div class="filter-section" id="filterSection">
+        <input type="text" id="coinSearch" placeholder="Koin Ara (örn: BTC)" onkeyup="filterTable()">
+        <select id="trendFilter" onchange="filterTable()">
+            <option value="">Tüm Trendler</option>
+            <option value="Güçlü Yükseliş">Güçlü Yükseliş</option>
+            <option value="Orta Seviye Yükseliş">Orta Yükseliş</option>
+            <option value="Güçlü Düşüş">Güçlü Düşüş</option>
+            <option value="Orta Seviye Düşüş">Orta Düşüş</option>
+            <option value="Nötr">Nötr</option>
+            <option value="Manipülasyon Riski">Manipülasyon Riski</option>
+        </select>
+        <select id="rsiFilter" onchange="filterTable()">
+            <option value="">Tüm RSI</option>
+            <option value="Aşırı Alım">Aşırı Alım</option>
+            <option value="Aşırı Satış">Aşırı Satış</option>
+            <option value="Dengeli Piyasa">Dengeli Piyasa</option>
+            <option value="Nötr">Nötr</option>
+        </select>
+        <select id="srFilter" onchange="filterTable()">
+            <option value="">Tüm Destek/Direnç</option>
+            <option value="Destek Seviyesi">Destek Seviyesi</option>
+            <option value="Direnç Seviyesi">Direnç Seviyesi</option>
+            <option value="Kırılım Riski">Kırılım Riski</option>
+        </select>
+    </div>
+    <div class="table-wrapper">
+        <table id="coinTable">
+            <thead>
+                <tr>
+                    <th>Koin</th>
+                    <th>Son Fiyat</th>
+                    <th>Değişim %</th>
+                    <th>RSI</th>
+                    <th>Destek & Direnç</th>
+                    <th>Trend</th>
+                    <th>Base Hacim</th>
+                    <th>Quote Hacim</th>
+                    <th>Volume %</th>
+                    <th>En Yüksek</th>
+                    <th>En Düşük</th>
+                </tr>
+            </thead>
+            <tbody id="crypto-table"></tbody>
+        </table>
+    </div>
+</div>
+<script>
+const tableBody = document.querySelector("#crypto-table");
+
+async function fetchData() {
+    try {
+        const response = await fetch("gateio_data.json");
+        if (!response.ok) throw new Error("JSON dosyası yüklenemedi: " + response.status);
+        const data = await response.json();
+        console.log("Çekilen veri:", data);
+
+        return data.map(entry => {
+            const coin = entry.currency_pair.toLowerCase();
+            const price = parseFloat(entry.last) || 0;
+            const change = parseFloat(entry.percentChange) || 0;
+            const high = parseFloat(entry.high24hr) || 0;
+            const low = parseFloat(entry.low24hr) || 0;
+            const baseVolume = parseFloat(entry.baseVolume) || 0;
+            const quoteVolume = parseFloat(entry.quoteVolume) || 0;
+            const volumePercentage = (baseVolume > 0) ? ((quoteVolume / baseVolume) * 100).toFixed(2) : "0.00";
+
+            const rsi = calculateRSI(Math.abs(change));
+            const supportResistance = determineSupportResistance(price, low, high);
+            const trend = determineTrend(change, parseFloat(volumePercentage));
+
+            return {
+                coin,
+                lastPrice: price,
+                percentChange: change,
+                rsi,
+                supportResistance,
+                trend,
+                baseVolume: baseVolume.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                quoteVolume: quoteVolume.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                volumePercentage,
+                high24hr: high,
+                low24hr: low
+            };
+        });
+    } catch (error) {
+        console.error("Veri çekme hatası:", error);
+        return [];
+    }
+}
+
+function calculateRSI(percentChange) {
+    if (percentChange > 70) return "🔺 Aşırı Alım (RSI > 70)";
+    if (percentChange < 30) return "🔻 Aşırı Satış (RSI < 30)";
+    if (percentChange >= 40 && percentChange <= 60) return "⚖️ Dengeli Piyasa (RSI 40-60)";
+    return "Nötr";
+}
+
+function determineSupportResistance(price, low, high) {
+    if (price <= low * 1.02) return "🟢 Destek Seviyesi";
+    if (price >= high * 0.98) return "🔴 Direnç Seviyesi";
+    return "⚠️ Kırılım Riski";
+}
+
+function determineTrend(change, volumePercentage) {
+    if (change > 20 && volumePercentage > 100) return "🚀 Güçlü Yükseliş Trendi";
+    if (change > 10 && volumePercentage > 50) return "📈 Orta Seviye Yükseliş";
+    if (change > 5 && volumePercentage < 10) return "⚠️ Manipülasyon Riski";
+    if (change < -10) return "📉 Güçlü Düşüş Trendi";
+    if (change < -5) return "📉 Orta Seviye Düşüş";
+    return "Nötr";
+}
+
+function createRow(coin, info) {
+    const row = document.createElement("tr");
+    row.dataset.coin = coin;
+
+    const formattedCoin = coin.replace('_usdt', '').toUpperCase();
+
+    row.innerHTML = `
+        <td><a href="https://www.tradingview.com/chart/BKBuIPdh/?symbol=${coin.replace('_', '').toLowerCase()}" target="wolatil">${formattedCoin}</a></td>
+        <td>${formatNumber(info.lastPrice)}</td>
+        <td>${formatNumber(info.percentChange)}%</td>
+        <td>${info.rsi}</td>
+        <td>${info.supportResistance}</td>
+        <td>${info.trend}</td>
+        <td>${info.baseVolume}</td>
+        <td>${info.quoteVolume}</td>
+        <td>${info.volumePercentage}%</td>
+        <td>${formatNumber(info.high24hr)}</td>
+        <td>${formatNumber(info.low24hr)}</td>
+    `;
+
+    row.addEventListener('click', () => {
+        window.open(`https://www.tradingview.com/chart/BKBuIPdh/?symbol=${coin.replace('_', '').toLowerCase()}`, 'wolatil');
+    });
+
+    return row;
+}
+
+function formatNumber(num) {
+    const parsedNum = parseFloat(num);
+    if (parsedNum < 1) {
+        return parsedNum.toFixed(6);
+    } else {
+        return parsedNum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 });
+    }
+}
+
+function initializeTable(data) {
+    tableBody.innerHTML = "";
+    if (data.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='11'>Veri bulunamadı</td></tr>";
+        console.log("Veri yok, tabloya hata mesajı eklendi.");
+        return;
+    }
+    data.forEach(info => {
+        const row = createRow(info.coin, info);
+        tableBody.appendChild(row);
+    });
+    filterTable();
+    console.log("Tablo dolduruldu, satır sayısı:", tableBody.children.length);
+}
+
+async function refreshData() {
+    const newData = await fetchData();
+    initializeTable(newData);
+}
+
+function filterTable() {
+    const search = document.getElementById('coinSearch').value.toUpperCase();
+    const trendFilter = document.getElementById('trendFilter').value;
+    const rsiFilter = document.getElementById('rsiFilter').value;
+    const srFilter = document.getElementById('srFilter').value;
+    const table = document.getElementById('coinTable');
+    const tr = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < tr.length; i++) {
+        const tdCoin = tr[i].getElementsByTagName('td')[0];
+        const tdRsi = tr[i].getElementsByTagName('td')[3];
+        const tdSr = tr[i].getElementsByTagName('td')[4];
+        const tdTrend = tr[i].getElementsByTagName('td')[5];
+
+        const coinText = tdCoin.textContent || tdCoin.innerText;
+        const rsiText = tdRsi.textContent || tdRsi.innerText;
+        const srText = tdSr.textContent || tdSr.innerText;
+        const trendText = tdTrend.textContent || tdTrend.innerText;
+
+        const coinMatch = !search || coinText.toUpperCase().indexOf(search) > -1;
+        const trendMatch = !trendFilter || trendText.includes(trendFilter);
+        const rsiMatch = !rsiFilter || rsiText.includes(rsiFilter);
+        const srMatch = !srFilter || srText.includes(srFilter);
+
+        tr[i].style.display = (coinMatch && trendMatch && rsiMatch && srMatch) ? '' : 'none';
+    }
+    console.log("Filtreleme uygulandı, görünür satır sayısı:", tableBody.getElementsByTagName('tr').length - 1);
+}
+
+fetchData().then(data => {
+    initializeTable(data);
+});
+setInterval(refreshData, 45000);
+</script>
+</body>
+
+<!-- Mirrored from www.wolatil.com/siralama.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:56 GMT -->
+</html>

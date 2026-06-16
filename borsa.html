@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<!-- Mirrored from www.wolatil.com/borsa.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:14 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borsa Analiz</title>
+    <script type="module" src="auth-check-include.js"></script>
+    <script>
+        let stocks = [];
+
+        async function fetchData() {
+            try {
+                const gun = Math.floor(Date.now() / 86400000);
+                const response = await fetch('yahoo_data.json?v=' + gun);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const data = await response.json();
+                if (!Array.isArray(data) || data.length === 0) throw new Error('Bos liste');
+                stocks = data.map(item => ({
+                    symbol:   (item.symbol   || '').toUpperCase(),
+                    name:     (item.name     || '').trim(),
+                    exchange: (item.exchange || '').toUpperCase(),
+                    suffix:   item.suffix    || '',
+                }));
+            } catch (err) {
+                console.error('Liste yuklenemedi:', err);
+            }
+        }
+
+        function searchStocks() {
+            const raw      = document.getElementById('search').value.trim();
+            const input    = raw.toUpperCase();
+            const dropdown = document.getElementById('suggestions');
+            dropdown.innerHTML = '';
+            if (input.length === 0) return;
+            if (stocks.length === 0) {
+                addItem(dropdown, 'Liste yukleniyor...', null, true);
+                return;
+            }
+
+            // Sembol ile başlayanlar önce, sonra içerenler, sonra isme göre
+            const s1 = stocks.filter(s => s.symbol.startsWith(input));
+            const s2 = stocks.filter(s => !s.symbol.startsWith(input) && s.symbol.includes(input));
+            const s3 = stocks.filter(s => !s.symbol.includes(input) && s.name.toUpperCase().includes(input));
+            const filtered = [...s1, ...s2, ...s3].slice(0, 50);
+
+            if (filtered.length === 0) {
+                addItem(dropdown, 'Sonuc bulunamadi', null, true);
+                return;
+            }
+            filtered.forEach(stock => addItem(dropdown, null, stock, false));
+        }
+
+        function addItem(dropdown, text, stock, disabled) {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item' + (disabled ? ' disabled' : '');
+            if (disabled) {
+                div.textContent = text;
+            } else {
+                const badge = stock.exchange
+                    ? '<span class="badge">' + stock.exchange + '</span>' : '';
+                const name = (stock.name && stock.name !== stock.symbol)
+                    ? '<span class="sname">' + stock.name + '</span>' : '';
+                div.innerHTML = '<span class="sym">' + stock.symbol + '</span>' + badge + name;
+                div.onclick = () => selectStock(stock);
+            }
+            dropdown.appendChild(div);
+        }
+
+        function selectStock(stock) {
+            document.getElementById('search').value = stock.symbol;
+            document.getElementById('suggestions').innerHTML = '';
+            const saat = document.getElementById('saat').value || '1h';
+            // suffix olmadan gönder — yahoo_kopru.php zaten .IS ekliyor
+            const fullSymbol = stock.symbol + (stock.suffix || '');
+			document.getElementById('chartFrame').src =
+				'yapborsa10d3.html?koin=' + encodeURIComponent(fullSymbol) + '&saat=' + saat;
+        }
+
+        function saatDegisti() {
+            const sym   = document.getElementById('search').value.toUpperCase().trim();
+            if (!sym) return;
+            const stock = stocks.find(s => s.symbol === sym);
+            if (stock) selectStock(stock);
+        }
+
+        function handleKey(e) {
+            const dropdown = document.getElementById('suggestions');
+            const items    = [...dropdown.querySelectorAll('.suggestion-item:not(.disabled)')];
+            if (items.length === 0) return;
+            let idx = items.findIndex(i => i.classList.contains('active'));
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (idx >= 0) items[idx].classList.remove('active');
+                const next = (idx + 1) % items.length;
+                items[next].classList.add('active');
+                items[next].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (idx >= 0) items[idx].classList.remove('active');
+                const prev = (idx - 1 + items.length) % items.length;
+                items[prev].classList.add('active');
+                items[prev].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (idx >= 0) items[idx].click();
+                else if (items.length > 0) items[0].click();
+            } else if (e.key === 'Escape') {
+                dropdown.innerHTML = '';
+            }
+        }
+
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.search-container'))
+                document.getElementById('suggestions').innerHTML = '';
+        });
+
+        window.onload = fetchData;
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #0d0d0d; color: white; text-align: center; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        .search-container {
+            position: relative; padding: 10px 16px; background: #111;
+            border-bottom: 1px solid #2a2a2a; display: flex;
+            align-items: center; justify-content: center; gap: 8px;
+            flex-wrap: wrap; z-index: 100;
+        }
+
+        input[type="text"] {
+            padding: 9px 14px; width: 280px; font-size: 15px;
+            background: #1c1c1c; color: white; border: 1px solid #3a3a3a;
+            border-radius: 6px; outline: none; transition: border 0.2s;
+        }
+        input[type="text"]:focus { border-color: #00ccff; }
+
+        select#saat {
+            padding: 9px 12px; font-size: 15px; background: #1c1c1c;
+            color: white; border: 1px solid #3a3a3a; border-radius: 6px;
+            outline: none; cursor: pointer;
+        }
+        select#saat:focus { border-color: #00ccff; }
+
+        .suggestions {
+            position: absolute; top: 50px; left: 50%; transform: translateX(-50%);
+            width: 400px; max-width: 94vw; background: #181818;
+            border: 1px solid #333; border-radius: 8px; max-height: 280px;
+            overflow-y: auto; z-index: 200; text-align: left;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.7);
+        }
+
+        .suggestion-item {
+            padding: 8px 14px; cursor: pointer; border-bottom: 1px solid #222;
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+            transition: background 0.12s;
+        }
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover, .suggestion-item.active { background: #242424; }
+        .suggestion-item.disabled { color: #666; cursor: default; font-size: 13px; }
+
+        .sym  { font-weight: bold; color: #00ccff; font-size: 14px; min-width: 80px; }
+        .badge { font-size: 10px; background: #2a2a2a; color: #aaa; padding: 2px 6px; border-radius: 4px; border: 1px solid #3a3a3a; }
+        .sname { font-size: 12px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+
+        .iframe-container { flex: 1; width: 100%; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+
+        @media (max-width: 500px) {
+            input[type="text"] { width: 180px; }
+            .suggestions { width: 96vw; left: 2vw; transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input
+            type="text"
+            id="search"
+            oninput="searchStocks()"
+            onkeydown="handleKey(event)"
+            placeholder="Hisse kodu veya şirket adı..."
+            autocomplete="off"
+            spellcheck="false"
+        >
+        <select id="saat" onchange="saatDegisti()">
+            <option value="1h">1 Saat</option>
+            <option value="1d">1 Gün</option>
+            </select>
+        <div id="suggestions" class="suggestions"></div>
+    </div>
+
+    <div class="iframe-container">
+        <iframe id="chartFrame" src="#" allow="fullscreen"></iframe>
+    </div>
+</body>
+
+<!-- Mirrored from www.wolatil.com/borsa.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Jun 2026 09:22:15 GMT -->
+</html>
